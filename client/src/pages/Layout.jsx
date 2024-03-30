@@ -8,17 +8,19 @@ import "../assets/dist/js/tabler.min.js";
 import "../assets/dist/js/demo.min.js";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { Footer, SideBar, TopNav } from "../components";
+import { Footer, SideBar, TopNav } from "../components/index.js";
 
-const LayoutAdmin = () => {
+const Layout = () => {
   return (
     <>
       <TopNav />
       <SideBar />
-      <Outlet />
+      <div className="page-wrapper">
+        <Outlet />
+      </div>
       <Footer />
     </>
   );
 };
 
-export default LayoutAdmin;
+export default Layout;

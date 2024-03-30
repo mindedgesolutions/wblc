@@ -1,7 +1,6 @@
 export { default as Login } from "./auth/Login";
 export { default as Error } from "./Error";
-export { default as LayoutAdmin } from "./LayoutAdmin";
-export { default as LayoutUser } from "./LayoutUser";
+export { default as Layout } from "./Layout";
 export { default as AdminDashboard } from "./users/AdminDashboard";
 export { default as UserDashboard } from "./users/UserDashboard";
 export { default as ChangePassword } from "./auth/ChangePassword";

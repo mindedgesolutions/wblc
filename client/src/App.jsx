@@ -7,7 +7,7 @@ const router = createBrowserRouter([
   { path: "/profile", element: <Wb.Profile /> },
   {
     path: "/admin",
-    element: <Wb.LayoutAdmin />,
+    element: <Wb.Layout />,
     children: [
       { path: "users", element: <Wb.UserList /> },
       { path: "modules", element: <Wb.ModuleList /> },
