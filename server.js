@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 
 // Routes ---
+import rolesPermissions from "./routes/rolesPermissions.js";
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -20,7 +21,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // API starts ---
-
+app.use("/api/v1/roles-permissions", rolesPermissions);
 // API ends ---
 
 const port = process.env.APP_PORT || 3001;

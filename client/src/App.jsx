@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import * as Wb from "./pages";
+import { store } from "./store";
 
 const router = createBrowserRouter([
   { path: "/", index: true, element: <Wb.Login />, errorElement: <Wb.Error /> },

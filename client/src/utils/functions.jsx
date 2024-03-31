@@ -30,3 +30,17 @@ export const genderFormat = (value) => {
   }
   return label;
 };
+
+export const serialNo = (page) => {
+  const slNo = Number(page) === 1 || !page ? 1 : (Number(page) - 1) * 10 + 1;
+  return slNo;
+};
+
+export const shortDesc = (desc) => {
+  const shortDesc = desc
+    ? desc.length
+      ? desc.slice(0, 20) + " ..."
+      : desc
+    : `NA`;
+  return shortDesc;
+};
