@@ -38,7 +38,7 @@ export const serialNo = (page) => {
 
 export const shortDesc = (desc) => {
   const shortDesc = desc
-    ? desc.length
+    ? desc.length > 20
       ? desc.slice(0, 20) + " ..."
       : desc
     : `NA`;

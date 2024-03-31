@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,8 +12,18 @@ import { setTotal } from "../../features/common/commonSlice";
 
 const AddEditModule = () => {
   const dispatch = useDispatch();
-  const { modules, addModal } = useSelector((store) => store.modules);
+  const { modules, addModal, editId } = useSelector((store) => store.modules);
   const { total } = useSelector((store) => store.common);
+  const editData = editId && modules.find((i) => i.id === editId);
+  const [form, setForm] = useState({ name: "", desc: "" });
+
+  useEffect(() => {
+    setForm({ name: editData?.name || "", desc: editData?.description || "" });
+  }, [editId]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleClose = () => {
     dispatch(hideAddModal());
@@ -23,20 +33,29 @@ const AddEditModule = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData);
+    const process = editId ? customFetch.patch : customFetch.post;
+    const api = editId
+      ? `/roles-permissions/modules/${editId}` // For edit
+      : `/roles-permissions/modules`; // For add
+    const msg = editId ? `Module details updated` : `Module added`;
     try {
-      const response = await customFetch.post(
-        `/roles-permissions/modules`,
-        data
-      );
+      const response = await process(api, data);
 
-      const newModule = response.data.data.rows[0];
-      const newTotal = Number(total) + 1;
+      if (!editId) {
+        const newModule = response.data.data.rows[0];
+        const newTotal = Number(total) + 1;
+        dispatch(setModules([...modules, newModule]));
+        dispatch(setTotal(newTotal));
+      } else {
+        const newObject = response.data.data.rows[0];
 
-      dispatch(setModules([...modules, newModule]));
-      dispatch(setTotal(newTotal));
+        const reducedModules = modules.filter((i) => i.id !== editId);
+        const newModules = [...reducedModules, newObject];
+        dispatch(setModules(newModules));
+      }
       dispatch(hideAddModal());
 
-      toast.success(`Module added`);
+      toast.success(msg);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       return error;
@@ -46,7 +65,11 @@ const AddEditModule = () => {
   return (
     <Modal show={addModal} size="lg" onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Add new module</Modal.Title>
+        <Modal.Title>
+          {editId
+            ? `Update details of ${form.name.toUpperCase()}`
+            : `Add new module`}
+        </Modal.Title>
       </Modal.Header>
       <form method="post" onSubmit={handleSubmit}>
         <Modal.Body>
@@ -60,6 +83,8 @@ const AddEditModule = () => {
                 className="form-control"
                 name="name"
                 id="name"
+                value={form.name}
+                onChange={handleChange}
               />
             </div>
             <div className="mb-3 col-md-12 mt-0 pt-0">
@@ -72,6 +97,8 @@ const AddEditModule = () => {
                 id="desc"
                 cols="30"
                 rows="3"
+                value={form.desc}
+                onChange={handleChange}
               ></textarea>
             </div>
           </div>

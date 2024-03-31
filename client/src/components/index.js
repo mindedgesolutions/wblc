@@ -7,3 +7,4 @@ export { default as TableLoader } from "./TableLoader";
 export { default as PaginationContainer } from "./PaginationContainer";
 export { default as ModalDelete } from "./ModalDelete";
 export { default as AddEditModule } from "./rolesPermissions/AddEditModule";
+export { default as ActivateModule } from "./rolesPermissions/ActivateModule";

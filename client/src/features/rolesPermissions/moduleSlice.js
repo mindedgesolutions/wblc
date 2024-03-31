@@ -6,6 +6,7 @@ const initialState = {
   confirmModal: false,
   editModal: false,
   deleteParams: { id: "", title: "", tables: [] },
+  editId: "",
 };
 
 const moduleSlice = createSlice({
@@ -13,9 +14,11 @@ const moduleSlice = createSlice({
   initialState: initialState,
   reducers: {
     setModules: (state, action) => {
-      state.modules = action.payload;
+      const sorted = [...action.payload].sort((a, b) => b.id - a.id);
+      state.modules = sorted;
     },
-    showAddModal: (state) => {
+    showAddModal: (state, action) => {
+      state.editId = action.payload ?? "";
       state.addModal = true;
     },
     hideAddModal: (state) => {

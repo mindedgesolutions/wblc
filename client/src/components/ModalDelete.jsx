@@ -1,18 +1,46 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { hideConfirmModal } from "../features/rolesPermissions/moduleSlice";
+import {
+  hideConfirmModal,
+  setModules,
+} from "../features/rolesPermissions/moduleSlice";
+import { splitErrors } from "../utils/showErrors";
+import customFetch from "../utils/customFetch";
+import { toast } from "react-toastify";
 
 const ModalDelete = () => {
   const dispatch = useDispatch();
-  const { confirmModal, deleteParams } = useSelector((store) => store.modules);
+  const { modules, confirmModal, deleteParams } = useSelector(
+    (store) => store.modules
+  );
 
   const handleClose = () => {
     dispatch(hideConfirmModal());
   };
 
-  const handleSubmit = async () => {
+  const changed = modules.find((i) => i.id === deleteParams.id);
+  const newObject = { ...changed, is_active: false };
+
+  const reducedModules = modules.filter((i) => i.id !== deleteParams.id);
+  const newModules = [...reducedModules, newObject];
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await customFetch.delete(`/roles-permissions/${deleteParams.type}`, {
+        params: {
+          id: deleteParams.id,
+          tables: deleteParams.tables,
+        },
+      });
+      dispatch(setModules(newModules));
+      dispatch(hideConfirmModal());
+      toast.success(`Module deactivated`);
+    } catch (error) {
+      splitErrors(error?.response?.data?.msg);
+      return error;
+    }
   };
 
   return (

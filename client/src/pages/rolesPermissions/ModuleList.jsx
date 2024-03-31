@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import { MdModeEdit } from "react-icons/md";
 import {
+  ActivateModule,
   AddEditModule,
   ModalDelete,
   PageHeader,
@@ -23,6 +24,7 @@ import {
 } from "../../features/rolesPermissions/moduleSlice";
 import { serialNo, shortDesc } from "../../utils/functions";
 import { setTotal } from "../../features/common/commonSlice";
+import { MdOutlineThumbUp } from "react-icons/md";
 
 const ModuleList = () => {
   document.title = `List of Modules | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -38,6 +40,7 @@ const ModuleList = () => {
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
 
+  // Fetch all data starts ------
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -59,6 +62,7 @@ const ModuleList = () => {
       return error;
     }
   };
+  // Fetch all data ends ------
 
   const pageCount = metaData?.totalPages;
   const currentPage = metaData?.currentPage;
@@ -68,14 +72,17 @@ const ModuleList = () => {
     navigate(resetUrl);
   };
 
+  // Confirm delete starts ------
   const confirmDelete = (id, name) => {
     const params = {
       id: id,
       title: name,
-      tables: [`modules`, `user_master`, `roles`],
+      type: "modules",
+      tables: [`modules`],
     };
     dispatch(showConfirmModal(params));
   };
+  // Confirm delete ends ------
 
   useEffect(() => {
     fetchData();
@@ -151,19 +158,30 @@ const ModuleList = () => {
                       <th className="bg-dark text-white">SL. NO.</th>
                       <th className="bg-dark text-white">Module</th>
                       <th className="bg-dark text-white">Description</th>
+                      <th className="bg-dark text-white">Status</th>
                       <th className="bg-dark text-white"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {isLoading ? (
                       <tr>
-                        <td colSpan={4}>
+                        <td colSpan={5}>
                           <TableLoader />
                         </td>
                       </tr>
                     ) : (
                       <>
                         {modules.map((i, index) => {
+                          const isActive = i?.is_active ? (
+                            <span className="badge bg-success-lt p-1">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="badge bg-danger-lt p-1">
+                              Inactive
+                            </span>
+                          );
+
                           return (
                             <tr key={nanoid()}>
                               <td>
@@ -171,20 +189,33 @@ const ModuleList = () => {
                               </td>
                               <td>{i?.name?.toUpperCase()}</td>
                               <td>{shortDesc(i?.description)}</td>
+                              <td>{isActive}</td>
                               <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <MdModeEdit size={14} />
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-danger btn-sm"
-                                  onClick={() => confirmDelete(i?.id, i?.name)}
-                                >
-                                  <FaRegTrashAlt size={14} />
-                                </button>
+                                {i?.is_active ? (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="btn btn-warning btn-sm me-3"
+                                      onClick={() =>
+                                        dispatch(showAddModal(i?.id))
+                                      }
+                                    >
+                                      <MdModeEdit size={14} />
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className="btn btn-danger btn-sm"
+                                      onClick={() =>
+                                        confirmDelete(i?.id, i?.name)
+                                      }
+                                    >
+                                      <FaRegTrashAlt size={14} />
+                                    </button>
+                                  </>
+                                ) : (
+                                  <ActivateModule id={i?.id} />
+                                )}
                               </td>
                             </tr>
                           );
