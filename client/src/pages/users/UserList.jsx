@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import { MdModeEdit } from "react-icons/md";
 import {
   ActivateUser,
-  AddEditModule,
+  AddEditUser,
   DeleteModule,
   PageHeader,
   PageWrapper,
@@ -24,6 +24,7 @@ import {
   showAddModal,
   showConfirmModal,
 } from "../../features/users/userSlice";
+import { setRoles } from "../../features/rolesPermissions/roleSlice";
 
 const UserList = () => {
   document.title = `List of Users | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -34,6 +35,7 @@ const UserList = () => {
   const resetUrl = `/admin/users`;
 
   const { users } = useSelector((store) => store.users);
+  const { roles } = useSelector((store) => store.roles);
   const { total } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
@@ -49,7 +51,12 @@ const UserList = () => {
           page: queryParams.get("page") || "",
         },
       });
-
+      if (roles.length === 0) {
+        const allRoles = await customFetch.get(`/roles-permissions/roles`, {
+          params: { name: "", page: "" },
+        });
+        dispatch(setRoles(allRoles.data.data.rows));
+      }
       dispatch(setUsers(response.data.data.rows));
       dispatch(setTotal(response.data.meta.totalRecords));
 
@@ -97,6 +104,7 @@ const UserList = () => {
                   <button
                     type="submit"
                     className="btn btn-success d-none d-sm-inline-block me-2"
+                    onClick={() => dispatch(showAddModal())}
                   >
                     Add new
                   </button>
@@ -136,6 +144,7 @@ const UserList = () => {
                       <button
                         type="button"
                         className="btn btn-default d-none d-sm-inline-block"
+                        onClick={resetSearch}
                       >
                         <IoReloadSharp className="fs-3" />
                       </button>
@@ -233,7 +242,7 @@ const UserList = () => {
             </div>
           </div>
         </div>
-        <AddEditModule />
+        <AddEditUser />
         <DeleteModule />
 
         <PaginationContainer pageCount={pageCount} currentPage={currentPage} />

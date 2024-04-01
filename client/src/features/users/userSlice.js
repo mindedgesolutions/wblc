@@ -6,6 +6,7 @@ const initialState = {
   confirmModal: false,
   deleteParams: {},
   editId: "",
+  selectedRoles: [],
 };
 
 const userSlice = createSlice({
@@ -30,6 +31,9 @@ const userSlice = createSlice({
       state.confirmModal = false;
       state.deleteParams = {};
     },
+    setSelectedRoles: (state, action) => {
+      state.selectedRoles = action.payload;
+    },
   },
 });
 
@@ -39,5 +43,6 @@ export const {
   hideAddModal,
   showConfirmModal,
   hideConfirmModal,
+  setSelectedRoles,
 } = userSlice.actions;
 export default userSlice.reducer;
