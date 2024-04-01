@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { setModules } from "../../features/rolesPermissions/moduleSlice";
+import {
+  hideAddModal,
+  setModules,
+} from "../../features/rolesPermissions/moduleSlice";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import { toast } from "react-toastify";
-import { setTotal, hideAddModal } from "../../features/common/commonSlice";
+import { setTotal } from "../../features/common/commonSlice";
 import SubmitBtn from "../SubmitBtn";
 
 const AddEditModule = () => {
   const dispatch = useDispatch();
-  const { modules } = useSelector((store) => store.modules);
-  const { total, addModal, editId } = useSelector((store) => store.common);
+  const { modules, addModal, editId } = useSelector((store) => store.modules);
+  const { total } = useSelector((store) => store.common);
   const editData = editId && modules.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({ name: "", desc: "" });
@@ -72,7 +75,7 @@ const AddEditModule = () => {
             : `Add new module`}
         </Modal.Title>
       </Modal.Header>
-      <form method="post" autoComplete="off" onSubmit={handleSubmit}>
+      <form method="post" onSubmit={handleSubmit}>
         <Modal.Body>
           <div className="row row-cards">
             <div className="mb-3 col-md-12 mt-0 pt-0">

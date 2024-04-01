@@ -1,39 +1,41 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { setModules } from "../features/rolesPermissions/moduleSlice";
-import { splitErrors } from "../utils/showErrors";
-import customFetch from "../utils/customFetch";
+import {
+  hideConfirmModal,
+  setRoles,
+} from "../../features/rolesPermissions/roleSlice";
+import { splitErrors } from "../../utils/showErrors";
+import customFetch from "../../utils/customFetch";
 import { toast } from "react-toastify";
-import { hideConfirmModal } from "../features/common/commonSlice";
 
-const ModalDelete = () => {
+const DeleteRole = () => {
   const dispatch = useDispatch();
-  const { modules } = useSelector((store) => store.modules);
-  const { confirmModal, deleteParams } = useSelector((store) => store.common);
+  const { roles, confirmModal, deleteParams } = useSelector(
+    (store) => store.roles
+  );
 
   const handleClose = () => {
     dispatch(hideConfirmModal());
   };
 
-  const changed = modules.find((i) => i.id === deleteParams.id);
+  const changed = roles.find((i) => i.id === deleteParams.id);
   const newObject = { ...changed, is_active: false };
 
-  const reducedModules = modules.filter((i) => i.id !== deleteParams.id);
-  const newModules = [...reducedModules, newObject];
+  const reducedRoles = roles.filter((i) => i.id !== deleteParams.id);
+  const newRoles = [...reducedRoles, newObject];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await customFetch.delete(`/roles-permissions/${deleteParams.type}`, {
+      await customFetch.delete(`/roles-permissions/roles`, {
         params: {
           id: deleteParams.id,
-          tables: deleteParams.tables,
         },
       });
-      dispatch(setModules(newModules));
+      dispatch(setRoles(newRoles));
       dispatch(hideConfirmModal());
-      toast.success(`Module deactivated`);
+      toast.success(`Role deactivated`);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       return error;
@@ -66,4 +68,4 @@ const ModalDelete = () => {
   );
 };
 
-export default ModalDelete;
+export default DeleteRole;

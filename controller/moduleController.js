@@ -39,15 +39,11 @@ export const addNewModule = async (req, res) => {
 };
 
 export const deleteModule = async (req, res) => {
-  const { id, tables } = req.query;
-
-  let data;
-  for (const table of tables) {
-    data = await pool.query(
-      `update ${table} set is_active=false where id=$1 returning id`,
-      [id]
-    );
-  }
+  const { id } = req.query;
+  const data = await pool.query(
+    `update modules set is_active=false where id=$1 returning id`,
+    [id]
+  );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
 

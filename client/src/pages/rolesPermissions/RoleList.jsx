@@ -5,8 +5,11 @@ import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import {
   ActivateModule,
+  ActivateRole,
   AddEditModule,
-  ModalDelete,
+  AddEditRole,
+  DeleteModule,
+  DeleteRole,
   PageHeader,
   PageWrapper,
   PaginationContainer,
@@ -16,10 +19,14 @@ import { MdModeEdit } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { IoReloadSharp } from "react-icons/io5";
-import { setRoles } from "../../features/rolesPermissions/roleSlice";
+import {
+  setRoles,
+  showAddModal,
+  showConfirmModal,
+} from "../../features/rolesPermissions/roleSlice";
 import { nanoid } from "nanoid";
 import { serialNo, shortDesc } from "../../utils/functions";
-import { setTotal, showAddModal } from "../../features/common/commonSlice";
+import { setTotal } from "../../features/common/commonSlice";
 
 const RoleList = () => {
   document.title = `List of Roles | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -72,8 +79,6 @@ const RoleList = () => {
     const params = {
       id: id,
       title: name,
-      type: "modules",
-      tables: [`modules`],
     };
     dispatch(showConfirmModal(params));
   };
@@ -201,12 +206,15 @@ const RoleList = () => {
                                     <button
                                       type="button"
                                       className="btn btn-danger btn-sm"
+                                      onClick={() =>
+                                        confirmDelete(i?.id, i?.name)
+                                      }
                                     >
                                       <FaRegTrashAlt size={14} />
                                     </button>
                                   </>
                                 ) : (
-                                  <ActivateModule id={i?.id} />
+                                  <ActivateRole id={i?.id} />
                                 )}
                               </td>
                             </tr>
@@ -220,8 +228,8 @@ const RoleList = () => {
             </div>
           </div>
         </div>
-        <AddEditModule />
-        <ModalDelete />
+        <AddEditRole />
+        <DeleteRole />
 
         <PaginationContainer pageCount={pageCount} currentPage={currentPage} />
       </PageWrapper>

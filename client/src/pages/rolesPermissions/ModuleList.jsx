@@ -4,7 +4,7 @@ import { MdModeEdit } from "react-icons/md";
 import {
   ActivateModule,
   AddEditModule,
-  ModalDelete,
+  DeleteModule,
   PageHeader,
   PageWrapper,
   PaginationContainer,
@@ -17,13 +17,13 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
-import { setModules } from "../../features/rolesPermissions/moduleSlice";
-import { serialNo, shortDesc } from "../../utils/functions";
 import {
-  setTotal,
+  setModules,
   showAddModal,
   showConfirmModal,
-} from "../../features/common/commonSlice";
+} from "../../features/rolesPermissions/moduleSlice";
+import { serialNo, shortDesc } from "../../utils/functions";
+import { setTotal } from "../../features/common/commonSlice";
 
 const ModuleList = () => {
   document.title = `List of Modules | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -76,8 +76,6 @@ const ModuleList = () => {
     const params = {
       id: id,
       title: name,
-      type: "modules",
-      tables: [`modules`],
     };
     dispatch(showConfirmModal(params));
   };
@@ -228,7 +226,7 @@ const ModuleList = () => {
           </div>
         </div>
         <AddEditModule />
-        <ModalDelete />
+        <DeleteModule />
 
         <PaginationContainer pageCount={pageCount} currentPage={currentPage} />
       </PageWrapper>

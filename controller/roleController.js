@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import pool from "../db.js";
 import { paginationLogic } from "../utils/pagination.js";
+import slug from "slug";
 
 export const getAllRoles = async (req, res) => {
   const { name, page } = req.query;
@@ -35,7 +36,14 @@ export const addNewRole = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ data });
 };
 
-export const deleteRole = async (req, res) => {};
+export const deleteRole = async (req, res) => {
+  const { id } = req.query;
+  const data = await pool.query(
+    `update roles set is_active=false where id=$1`,
+    [id]
+  );
+  res.status(StatusCodes.ACCEPTED).json({ data });
+};
 
 export const activateRole = async (req, res) => {
   const { id } = req.params;

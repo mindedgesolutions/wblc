@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { hideAddModal, setTotal } from "../../features/common/commonSlice";
-import { setRoles } from "../../features/rolesPermissions/roleSlice";
+import { setTotal } from "../../features/common/commonSlice";
+import {
+  setRoles,
+  hideAddModal,
+} from "../../features/rolesPermissions/roleSlice";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
+import SubmitBtn from "../SubmitBtn";
 
 const AddEditRole = () => {
   const dispatch = useDispatch();
-  const { roles } = useSelector((store) => store.roles);
-  const { total, addModal, editId } = useSelector((store) => store.common);
+  const { roles, addModal, editId } = useSelector((store) => store.roles);
+  const { total } = useSelector((store) => store.common);
   const editData = editId && roles.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({ name: "", desc: "" });
