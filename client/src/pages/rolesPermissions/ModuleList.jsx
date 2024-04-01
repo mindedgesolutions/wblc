@@ -17,14 +17,13 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
+import { setModules } from "../../features/rolesPermissions/moduleSlice";
+import { serialNo, shortDesc } from "../../utils/functions";
 import {
-  setModules,
+  setTotal,
   showAddModal,
   showConfirmModal,
-} from "../../features/rolesPermissions/moduleSlice";
-import { serialNo, shortDesc } from "../../utils/functions";
-import { setTotal } from "../../features/common/commonSlice";
-import { MdOutlineThumbUp } from "react-icons/md";
+} from "../../features/common/commonSlice";
 
 const ModuleList = () => {
   document.title = `List of Modules | ${import.meta.env.VITE_ADMIN_TITLE}`;

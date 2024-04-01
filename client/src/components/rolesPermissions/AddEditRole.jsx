@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { setModules } from "../../features/rolesPermissions/moduleSlice";
+import { hideAddModal, setTotal } from "../../features/common/commonSlice";
+import { setRoles } from "../../features/rolesPermissions/roleSlice";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
-import { toast } from "react-toastify";
-import { setTotal, hideAddModal } from "../../features/common/commonSlice";
-import SubmitBtn from "../SubmitBtn";
 
-const AddEditModule = () => {
+const AddEditRole = () => {
   const dispatch = useDispatch();
-  const { modules } = useSelector((store) => store.modules);
+  const { roles } = useSelector((store) => store.roles);
   const { total, addModal, editId } = useSelector((store) => store.common);
-  const editData = editId && modules.find((i) => i.id === editId);
+  const editData = editId && roles.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({ name: "", desc: "" });
 
   useEffect(() => {
-    setForm({ name: editData?.name || "", desc: editData?.description || "" });
+    setForm({
+      name: editData?.name || "",
+      desc: editData?.description || "",
+    });
   }, [editId]);
 
   const handleChange = (e) => {
@@ -35,23 +36,23 @@ const AddEditModule = () => {
     const data = Object.fromEntries(formData);
     const process = editId ? customFetch.patch : customFetch.post;
     const api = editId
-      ? `/roles-permissions/modules/${editId}` // For edit
-      : `/roles-permissions/modules`; // For add
-    const msg = editId ? `Module details updated` : `Module added`;
+      ? `/roles-permissions/roles/${editId}` // For edit
+      : `/roles-permissions/roles`; // For add
+    const msg = editId ? `Role details updated` : `Role added`;
     try {
       const response = await process(api, data);
 
       if (!editId) {
-        const newModule = response.data.data.rows[0];
+        const newRole = response.data.data.rows[0];
         const newTotal = Number(total) + 1;
-        dispatch(setModules([...modules, newModule]));
+        dispatch(setRoles([...roles, newRole]));
         dispatch(setTotal(newTotal));
       } else {
         const newObject = response.data.data.rows[0];
 
-        const reducedModules = modules.filter((i) => i.id !== editId);
-        const newModules = [...reducedModules, newObject];
-        dispatch(setModules(newModules));
+        const reducedRoles = roles.filter((i) => i.id !== editId);
+        const newRoles = [...reducedRoles, newObject];
+        dispatch(setRoles(newRoles));
       }
       dispatch(hideAddModal());
       toast.success(msg);
@@ -69,7 +70,7 @@ const AddEditModule = () => {
         <Modal.Title>
           {editId
             ? `Update details of ${form.name.toUpperCase()}`
-            : `Add new module`}
+            : `Add new role`}
         </Modal.Title>
       </Modal.Header>
       <form method="post" autoComplete="off" onSubmit={handleSubmit}>
@@ -106,7 +107,7 @@ const AddEditModule = () => {
         </Modal.Body>
         <Modal.Footer>
           <SubmitBtn
-            text={editId ? `Update details` : `Add module`}
+            text={editId ? `Update details` : `Add role`}
             isLoading={isLoading}
           />
           <button
@@ -122,4 +123,4 @@ const AddEditModule = () => {
   );
 };
 
-export default AddEditModule;
+export default AddEditRole;

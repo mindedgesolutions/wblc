@@ -1,19 +1,16 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideConfirmModal,
-  setModules,
-} from "../features/rolesPermissions/moduleSlice";
+import { setModules } from "../features/rolesPermissions/moduleSlice";
 import { splitErrors } from "../utils/showErrors";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { hideConfirmModal } from "../features/common/commonSlice";
 
 const ModalDelete = () => {
   const dispatch = useDispatch();
-  const { modules, confirmModal, deleteParams } = useSelector(
-    (store) => store.modules
-  );
+  const { modules } = useSelector((store) => store.modules);
+  const { confirmModal, deleteParams } = useSelector((store) => store.common);
 
   const handleClose = () => {
     dispatch(hideConfirmModal());

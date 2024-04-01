@@ -28,3 +28,28 @@ export const validateModule = withValidationErrors([
     .isLength({ min: 3, max: 255 })
     .withMessage(`Description must be between 3 to 255 characters`),
 ]);
+
+export const validateRole = withValidationErrors([
+  body("name").notEmpty().withMessage(`Enter role`),
+  body("name")
+    .isLength({ min: 3, max: 255 })
+    .withMessage(`Role must be between 3 to 255 characters`),
+  body("name").custom(async (value, { req }) => {
+    const input = slug(value);
+    const { id } = req.params;
+    const condition = id ? `slug=$1 and id!=$2` : `slug=$1`;
+    const values = id ? [input, id] : [input];
+    const check = await pool.query(
+      `select count(id) from roles where ${condition}`,
+      values
+    );
+    if (Number(check.rows[0].count) > 0) {
+      throw new BadRequestError(`Role exists`);
+    }
+    return true;
+  }),
+  body("desc")
+    .optional({ checkFalsy: true })
+    .isLength({ min: 3, max: 255 })
+    .withMessage(`Description must be between 3 to 255 characters`),
+]);

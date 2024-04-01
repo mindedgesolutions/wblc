@@ -4,6 +4,7 @@ import Avatar from "../assets/dist/images/000m.jpg";
 import { Link } from "react-router-dom";
 import { AiOutlineHome, AiOutlineFile } from "react-icons/ai";
 import { BsFillMoonFill, BsSunFill, BsGraphUpArrow } from "react-icons/bs";
+import { GrUserSettings } from "react-icons/gr";
 
 const SideBar = () => {
   return (
@@ -70,6 +71,36 @@ const SideBar = () => {
                 </span>
                 <span className="nav-link-title">Home</span>
               </Link>
+            </li>
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle"
+                href="#navbar-extra"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="false"
+                role="button"
+                aria-expanded="false"
+              >
+                <span className="nav-link-icon d-md-none d-lg-inline-block">
+                  <GrUserSettings size={14} />
+                </span>
+                <span className="nav-link-title">Roles & Permissions</span>
+              </a>
+              <div className="dropdown-menu">
+                <div className="dropdown-menu-columns">
+                  <div className="dropdown-menu-column">
+                    <Link to="/admin/modules" className="dropdown-item">
+                      Modules
+                    </Link>
+                    <Link to="/admin/roles" className="dropdown-item">
+                      Roles
+                    </Link>
+                    <Link to="/admin/permissions" className="dropdown-item">
+                      Permissions
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </li>
             <li className="nav-item dropdown">
               <a
