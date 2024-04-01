@@ -64,3 +64,5 @@ export const updateRole = async (req, res) => {
   );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
+
+export const rolePermissions = async (req, res) => {};

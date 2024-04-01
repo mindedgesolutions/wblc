@@ -16,6 +16,7 @@ import {
   addNewRole,
   deleteRole,
   getAllRoles,
+  rolePermissions,
   updateRole,
 } from "../controller/roleController.js";
 
@@ -34,5 +35,6 @@ router
   .delete(deleteRole);
 router.patch(`/roles/:id`, validateRole, updateRole);
 router.patch(`/activate-role/:id`, activateRole);
+router.post(`/role-permissions`, rolePermissions);
 
 export default router;

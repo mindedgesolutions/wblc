@@ -13,7 +13,8 @@ const router = createBrowserRouter([
       { path: "users", element: <Wb.UserList /> },
       { path: "modules", element: <Wb.ModuleList /> },
       { path: "roles", element: <Wb.RoleList /> },
-      { path: "permissions", element: <Wb.PermissionList /> },
+      { path: "role-permissions", element: <Wb.PermissionRole /> },
+      { path: "user-permissions", element: <Wb.PermissionUser /> },
     ],
   },
 ]);

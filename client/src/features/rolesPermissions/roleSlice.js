@@ -6,6 +6,8 @@ const initialState = {
   confirmModal: false,
   deleteParams: {},
   editId: "",
+  rolePermissionModal: false,
+  userPermissionModal: false,
 };
 
 const roleSlice = createSlice({
@@ -31,6 +33,12 @@ const roleSlice = createSlice({
       state.confirmModal = false;
       state.deleteParams = {};
     },
+    showRolePermissionModal: (state) => {
+      state.rolePermissionModal = true;
+    },
+    hideRolePermissionModal: (state) => {
+      state.rolePermissionModal = false;
+    },
   },
 });
 
@@ -40,5 +48,7 @@ export const {
   hideAddModal,
   showConfirmModal,
   hideConfirmModal,
+  showRolePermissionModal,
+  hideRolePermissionModal,
 } = roleSlice.actions;
 export default roleSlice.reducer;

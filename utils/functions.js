@@ -1,4 +1,4 @@
-import pool from "../db";
+import pool from "../db.js";
 import slug from "slug";
 
 export const createUsername = async (name) => {
@@ -8,7 +8,7 @@ export const createUsername = async (name) => {
     [username]
   );
   let newUsername;
-  if (check.rows[0].count === 0) {
+  if (Number(check.rows[0].count) === 0) {
     newUsername = username;
   } else {
     newUsername = username + check.rows[0].count;
