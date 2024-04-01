@@ -14,14 +14,14 @@ const AddEditRole = () => {
   const dispatch = useDispatch();
   const { roles, addModal, editId } = useSelector((store) => store.roles);
   const { total } = useSelector((store) => store.common);
+  const [form, setForm] = useState({ name: "", desc: "" });
   const editData = editId && roles.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", desc: "" });
 
   useEffect(() => {
     setForm({
-      name: editData?.name || "",
-      desc: editData?.description || "",
+      name: editId ? editData?.name : "",
+      desc: editId ? editData?.description : "",
     });
   }, [editId]);
 

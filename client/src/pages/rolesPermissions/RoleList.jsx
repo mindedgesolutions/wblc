@@ -4,11 +4,8 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import {
-  ActivateModule,
   ActivateRole,
-  AddEditModule,
   AddEditRole,
-  DeleteModule,
   DeleteRole,
   PageHeader,
   PageWrapper,
@@ -86,7 +83,7 @@ const RoleList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page")]);
+  }, [queryParams.get("s"), queryParams.get("page"), total]);
 
   return (
     <>

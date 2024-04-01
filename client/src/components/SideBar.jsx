@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { AiOutlineHome, AiOutlineFile } from "react-icons/ai";
 import { BsFillMoonFill, BsSunFill, BsGraphUpArrow } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
+import { FiUsers } from "react-icons/fi";
 
 const SideBar = () => {
   return (
@@ -101,6 +102,14 @@ const SideBar = () => {
                   </div>
                 </div>
               </div>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/users">
+                <span className="nav-link-icon d-md-none d-lg-inline-block">
+                  <FiUsers size={18} />
+                </span>
+                <span className="nav-link-title">Users</span>
+              </Link>
             </li>
             <li className="nav-item dropdown">
               <a

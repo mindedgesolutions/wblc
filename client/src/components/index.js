@@ -12,3 +12,5 @@ export { default as DeleteModule } from "./rolesPermissions/DeleteModule";
 export { default as AddEditRole } from "./rolesPermissions/AddEditRole";
 export { default as ActivateRole } from "./rolesPermissions/ActivateRole";
 export { default as DeleteRole } from "./rolesPermissions/DeleteRole";
+export { default as ActivateUser } from "./users/ActivateUser";
+export { default as AddEditUser } from "./users/AddEditUser";

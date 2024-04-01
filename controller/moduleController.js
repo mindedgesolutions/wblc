@@ -59,10 +59,11 @@ export const activateModule = async (req, res) => {
 export const updateModule = async (req, res) => {
   const { id } = req.params;
   const { name, desc } = req.body;
+  const newSlug = slug(name);
   const description = desc ? desc.trim() : null;
   const data = await pool.query(
-    `update modules set name=$1, description=$2 where id=$3 returning *`,
-    [name.trim(), description, id]
+    `update modules set name=$1, description=$2, slug=$3 where id=$4 returning *`,
+    [name.trim(), description, newSlug, id]
   );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };

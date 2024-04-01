@@ -20,7 +20,10 @@ const AddEditModule = () => {
   const [form, setForm] = useState({ name: "", desc: "" });
 
   useEffect(() => {
-    setForm({ name: editData?.name || "", desc: editData?.description || "" });
+    setForm({
+      name: editId ? editData?.name : "",
+      desc: editId ? editData?.description : "",
+    });
   }, [editId]);
 
   const handleChange = (e) => {

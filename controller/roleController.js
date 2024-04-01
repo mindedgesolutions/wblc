@@ -56,10 +56,11 @@ export const activateRole = async (req, res) => {
 export const updateRole = async (req, res) => {
   const { id } = req.params;
   const { name, desc } = req.body;
+  const newSlug = slug(name);
   const description = desc ? desc.trim() : null;
   const data = await pool.query(
-    `update roles set name=$1, description=$2 where id=$3 returning *`,
-    [name.trim(), description, id]
+    `update roles set name=$1, description=$2, slug=$3 where id=$4 returning *`,
+    [name.trim(), description, newSlug, id]
   );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };

@@ -83,7 +83,7 @@ const ModuleList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page")]);
+  }, [queryParams.get("s"), queryParams.get("page"), total]);
 
   return (
     <>
