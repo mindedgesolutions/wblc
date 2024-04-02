@@ -96,6 +96,9 @@ const SideBar = () => {
                     <Link to="/admin/roles" className="dropdown-item">
                       Roles
                     </Link>
+                    <Link to="/admin/permissions" className="dropdown-item">
+                      Permissions
+                    </Link>
                     <Link
                       to="/admin/role-permissions"
                       className="dropdown-item"

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Form, useLocation, useNavigate } from "react-router-dom";
-import customFetch from "../../utils/customFetch";
-import { splitErrors } from "../../utils/showErrors";
+import { nanoid } from "nanoid";
+import { MdModeEdit } from "react-icons/md";
 import {
-  AssignPermissionToRole,
+  ActivatePermission,
+  AddEditPermission,
+  DeletePermission,
   PageHeader,
   PageWrapper,
   PaginationContainer,
@@ -12,27 +12,27 @@ import {
 } from "../../components";
 import { IoIosSearch } from "react-icons/io";
 import { IoReloadSharp } from "react-icons/io5";
-import { nanoid } from "nanoid";
-import { serialNo } from "../../utils/functions";
-import { MdModeEdit } from "react-icons/md";
-import {
-  setRoles,
-  showRolePermissionModal,
-} from "../../features/rolesPermissions/roleSlice";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { Form, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import customFetch from "../../utils/customFetch";
+import { splitErrors } from "../../utils/showErrors";
+import { serialNo, shortDesc } from "../../utils/functions";
 import { setTotal } from "../../features/common/commonSlice";
-import { setPermissions } from "../../features/rolesPermissions/permissionSlice";
+import {
+  setPermissions,
+  showConfirmModal,
+  showAddModal,
+} from "../../features/rolesPermissions/permissionSlice";
 
-const PermissionRole = () => {
-  document.title = `Role-wise Permissions | ${
-    import.meta.env.VITE_ADMIN_TITLE
-  }`;
+const PermissionList = () => {
+  document.title = `List of Permissions | ${import.meta.env.VITE_ADMIN_TITLE}`;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
-  const resetUrl = `/admin/role-permissions`;
+  const resetUrl = `/admin/permissions`;
 
-  const { roles } = useSelector((store) => store.roles);
   const { permissions } = useSelector((store) => store.permissions);
   const { total } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,27 +43,14 @@ const PermissionRole = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await customFetch.get(`/roles-permissions/roles`, {
+      const response = await customFetch.get(`/roles-permissions/permissions`, {
         params: {
           name: queryParams.get("s") || "",
           page: queryParams.get("page") || "",
         },
       });
 
-      if (permissions.length === 0) {
-        const permissions = await customFetch.get(
-          `/roles-permissions/permissions`,
-          {
-            params: {
-              name: "",
-              page: "",
-            },
-          }
-        );
-        dispatch(setPermissions(permissions.data.data.rows));
-      }
-
-      dispatch(setRoles(response.data.data.rows));
+      dispatch(setPermissions(response.data.data.rows));
       dispatch(setTotal(response.data.meta.totalRecords));
 
       setMetaData(response.data.meta);
@@ -84,6 +71,16 @@ const PermissionRole = () => {
     navigate(resetUrl);
   };
 
+  // Confirm delete starts ------
+  const confirmDelete = (id, name) => {
+    const params = {
+      id: id,
+      title: name,
+    };
+    dispatch(showConfirmModal(params));
+  };
+  // Confirm delete ends ------
+
   useEffect(() => {
     fetchData();
   }, [queryParams.get("s"), queryParams.get("page"), total]);
@@ -93,7 +90,20 @@ const PermissionRole = () => {
       <div className="page-header d-print-none">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
-            <PageHeader title={`Role-wise Permissions`} breadCrumb="" />
+            <PageHeader title={`List of Permissions`} breadCrumb="" />
+            <div className="col-auto ms-auto d-print-none">
+              <div className="btn-list">
+                <span className="d-none d-sm-inline">
+                  <button
+                    type="submit"
+                    className="btn btn-success d-none d-sm-inline-block me-2"
+                    onClick={() => dispatch(showAddModal())}
+                  >
+                    Add new
+                  </button>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -101,6 +111,7 @@ const PermissionRole = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-header">
+              Total {total} modules found
               <div className="col-auto ms-auto d-print-none">
                 <Form method="GET">
                   <div className="btn-list">
@@ -111,7 +122,7 @@ const PermissionRole = () => {
                           name="s"
                           value={searchInput}
                           className="form-control"
-                          placeholder="Search by role..."
+                          placeholder="Search by name..."
                           onChange={(e) => setSearchInput(e.target.value)}
                         />
                       </div>
@@ -142,9 +153,9 @@ const PermissionRole = () => {
                   <thead>
                     <tr>
                       <th className="bg-dark text-white">SL. NO.</th>
-                      <th className="bg-dark text-white">Roles</th>
-                      <th className="bg-dark text-white">Permissions</th>
-                      <th className="bg-dark text-white">Role Status</th>
+                      <th className="bg-dark text-white">Module</th>
+                      <th className="bg-dark text-white">Description</th>
+                      <th className="bg-dark text-white">Status</th>
                       <th className="bg-dark text-white"></th>
                     </tr>
                   </thead>
@@ -157,7 +168,7 @@ const PermissionRole = () => {
                       </tr>
                     ) : (
                       <>
-                        {roles.map((i, index) => {
+                        {permissions.map((i, index) => {
                           const isActive = i?.is_active ? (
                             <span className="badge bg-success-lt p-1">
                               Active
@@ -174,18 +185,34 @@ const PermissionRole = () => {
                                 {serialNo(queryParams.get("page")) + index}.
                               </td>
                               <td>{i?.name?.toUpperCase()}</td>
-                              <td>11</td>
+                              <td>{shortDesc(i?.description)}</td>
                               <td>{isActive}</td>
                               <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-warning btn-sm me-3"
-                                  onClick={() =>
-                                    dispatch(showRolePermissionModal(i?.id))
-                                  }
-                                >
-                                  <MdModeEdit size={14} />
-                                </button>
+                                {i?.is_active ? (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="btn btn-warning btn-sm me-3"
+                                      onClick={() =>
+                                        dispatch(showAddModal(i?.id))
+                                      }
+                                    >
+                                      <MdModeEdit size={14} />
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className="btn btn-danger btn-sm"
+                                      onClick={() =>
+                                        confirmDelete(i?.id, i?.name)
+                                      }
+                                    >
+                                      <FaRegTrashAlt size={14} />
+                                    </button>
+                                  </>
+                                ) : (
+                                  <ActivatePermission id={i?.id} />
+                                )}
                               </td>
                             </tr>
                           );
@@ -198,7 +225,8 @@ const PermissionRole = () => {
             </div>
           </div>
         </div>
-        <AssignPermissionToRole />
+        <AddEditPermission />
+        <DeletePermission />
 
         <PaginationContainer pageCount={pageCount} currentPage={currentPage} />
       </PageWrapper>
@@ -206,4 +234,4 @@ const PermissionRole = () => {
   );
 };
 
-export default PermissionRole;
+export default PermissionList;

@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import pool from "../db.js";
 import { paginationLogic } from "../utils/pagination.js";
 import slug from "slug";
+import { BadRequestError } from "../errors/customErrors.js";
 
 export const getAllRoles = async (req, res) => {
   const { name, page } = req.query;
@@ -65,4 +66,30 @@ export const updateRole = async (req, res) => {
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
 
-export const rolePermissions = async (req, res) => {};
+export const rolePermissions = async (req, res) => {
+  const { roleId, permissions } = req.body;
+
+  try {
+    await pool.query(`BEGIN`);
+
+    await pool.query(`delete from map_role_permission where role_id=$1`, [
+      Number(roleId),
+    ]);
+
+    for (const permission of permissions) {
+      const permissionId = Number(permission.value);
+      await pool.query(
+        `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
+        [Number(roleId), permissionId]
+      );
+    }
+
+    await pool.query(`COMMIT`);
+
+    res.status(StatusCodes.CREATED).json({ data: `success` });
+  } catch (error) {
+    await pool.query(`ROLLBACK`);
+    console.log(error);
+    throw new BadRequestError(`Something went wrong! Please try again`);
+  }
+};

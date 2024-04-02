@@ -19,6 +19,13 @@ import {
   rolePermissions,
   updateRole,
 } from "../controller/roleController.js";
+import {
+  activatePermission,
+  addNewPermission,
+  deletePermission,
+  getAllPermissions,
+  updatePermission,
+} from "../controller/permissionController.js";
 
 router
   .route(`/modules`)
@@ -35,6 +42,14 @@ router
   .delete(deleteRole);
 router.patch(`/roles/:id`, validateRole, updateRole);
 router.patch(`/activate-role/:id`, activateRole);
-router.post(`/role-permissions`, rolePermissions);
+router.post(`/map-role-permissions`, rolePermissions);
+
+router
+  .route(`/permissions`)
+  .get(getAllPermissions)
+  .post(validateModule, addNewPermission)
+  .delete(deletePermission);
+router.patch(`/permissions/:id`, validateModule, updatePermission);
+router.patch(`/activate-permission/:id`, activatePermission);
 
 export default router;

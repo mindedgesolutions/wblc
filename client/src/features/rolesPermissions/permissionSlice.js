@@ -1,23 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  roles: [],
+  permissions: [],
   addModal: false,
   confirmModal: false,
   deleteParams: {},
   editId: "",
-  rolePermissionModal: false,
-  userPermissionModal: false,
-  selectedRole: "",
 };
 
-const roleSlice = createSlice({
-  name: "roles",
+const permissionSlice = createSlice({
+  name: "permissions",
   initialState: initialState,
   reducers: {
-    setRoles: (state, action) => {
+    setPermissions: (state, action) => {
       const sorted = [...action.payload].sort((a, b) => b.id - a.id);
-      state.roles = sorted;
+      state.permissions = sorted;
     },
     showAddModal: (state, action) => {
       state.editId = action.payload ?? "";
@@ -34,24 +31,14 @@ const roleSlice = createSlice({
       state.confirmModal = false;
       state.deleteParams = {};
     },
-    showRolePermissionModal: (state, action) => {
-      state.rolePermissionModal = true;
-      state.selectedRole = action.payload;
-    },
-    hideRolePermissionModal: (state) => {
-      state.rolePermissionModal = false;
-      state.selectedRole = "";
-    },
   },
 });
 
 export const {
-  setRoles,
+  setPermissions,
   showAddModal,
   hideAddModal,
   showConfirmModal,
   hideConfirmModal,
-  showRolePermissionModal,
-  hideRolePermissionModal,
-} = roleSlice.actions;
-export default roleSlice.reducer;
+} = permissionSlice.actions;
+export default permissionSlice.reducer;
