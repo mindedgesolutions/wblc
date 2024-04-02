@@ -13,7 +13,7 @@ import {
 import { IoIosSearch } from "react-icons/io";
 import { IoReloadSharp } from "react-icons/io5";
 import { nanoid } from "nanoid";
-import { serialNo } from "../../utils/functions";
+import { randomBadgeBg, serialNo } from "../../utils/functions";
 import { MdModeEdit } from "react-icons/md";
 import {
   setRoles,
@@ -32,7 +32,7 @@ const PermissionRole = () => {
   const queryParams = new URLSearchParams(search);
   const resetUrl = `/admin/role-permissions`;
 
-  const { roles } = useSelector((store) => store.roles);
+  const { roles, changeCount } = useSelector((store) => store.roles);
   const { permissions } = useSelector((store) => store.permissions);
   const { total } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,13 +52,7 @@ const PermissionRole = () => {
 
       if (permissions.length === 0) {
         const permissions = await customFetch.get(
-          `/roles-permissions/permissions`,
-          {
-            params: {
-              name: "",
-              page: "",
-            },
-          }
+          `/roles-permissions/all-permissions`
         );
         dispatch(setPermissions(permissions.data.data.rows));
       }
@@ -86,7 +80,7 @@ const PermissionRole = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page"), total]);
+  }, [queryParams.get("s"), queryParams.get("page"), total, changeCount]);
 
   return (
     <>
@@ -174,7 +168,19 @@ const PermissionRole = () => {
                                 {serialNo(queryParams.get("page")) + index}.
                               </td>
                               <td>{i?.name?.toUpperCase()}</td>
-                              <td>11</td>
+                              <td>
+                                {i?.permissions[0]?.permission_id &&
+                                  i?.permissions?.map((a) => {
+                                    return (
+                                      <span
+                                        key={nanoid()}
+                                        className={`badge bg-${randomBadgeBg()}-lt me-1 fs-6`}
+                                      >
+                                        {a?.permission_name?.toUpperCase()}
+                                      </span>
+                                    );
+                                  })}
+                              </td>
                               <td>{isActive}</td>
                               <td>
                                 <button

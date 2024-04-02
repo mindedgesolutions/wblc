@@ -44,3 +44,9 @@ export const shortDesc = (desc) => {
     : `NA`;
   return shortDesc;
 };
+
+export const randomBadgeBg = () => {
+  const colorArray = ["azure", "purple", "pink", "yellow", "green", "cyan"];
+  const randomIndex = Math.floor(Math.random() * colorArray.length);
+  return colorArray[randomIndex];
+};

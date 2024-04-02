@@ -103,7 +103,7 @@ const AddEditRole = () => {
                 id="desc"
                 cols="30"
                 rows="3"
-                value={form.desc}
+                value={form.desc || ""}
                 onChange={handleChange}
               ></textarea>
             </div>

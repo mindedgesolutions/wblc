@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { hideRolePermissionModal } from "../../features/rolesPermissions/roleSlice";
+import {
+  hideRolePermissionModal,
+  updateCount,
+} from "../../features/rolesPermissions/roleSlice";
 import { Modal } from "react-bootstrap";
 import SubmitBtn from "../SubmitBtn";
 import { nanoid } from "@reduxjs/toolkit";
@@ -22,21 +25,22 @@ const AssignPermissionToRole = () => {
 
   const [inputRole, setInputRole] = useState("");
 
-  useEffect(() => {
-    setInputRole(selectedRole);
-  }, [selectedRole]);
-
   // ----------------------
 
   const { permissions } = useSelector((store) => store.permissions);
 
-  const dbPer = [];
-  //   userSchemes.data.data.rows.map((scheme) => {
-  //     const element = { value: scheme.scheme_id, label: scheme.schemes_name };
-  //     dbPer.push(element);
-  //   });
+  const editRole = roles.find((i) => i.id === selectedRole);
 
-  const [selectedPermissions, setSelectedPermissions] = useState([]);
+  const dbPer = [];
+  editRole?.permissions?.map((p) => {
+    const element = {
+      value: p.permission_id || "",
+      label: p.permission_name || "",
+    };
+    dbPer.push(element);
+  });
+
+  const [selectedPermissions, setSelectedPermissions] = useState(dbPer || []);
 
   const pers = [];
   permissions.map((perm) => {
@@ -44,13 +48,16 @@ const AssignPermissionToRole = () => {
     pers.push(element);
   });
 
-  const options = pers.filter(
-    (obj1) => !dbPer.some((obj2) => obj1.label === obj2.label)
-  );
+  const options = pers;
 
   const handleChange = async (selected) => {
     setSelectedPermissions(selected);
   };
+
+  useEffect(() => {
+    setInputRole(selectedRole);
+    setSelectedPermissions(dbPer || []);
+  }, [selectedRole]);
 
   // ----------------------
 
@@ -67,6 +74,7 @@ const AssignPermissionToRole = () => {
       );
       setIsLoading(false);
       dispatch(hideRolePermissionModal());
+      dispatch(updateCount());
       toast.success(`Permission(s) asigned`);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
@@ -114,7 +122,7 @@ const AssignPermissionToRole = () => {
                 name="permissions"
                 options={options}
                 onChange={handleChange}
-                value={selectedPermissions}
+                value={selectedPermissions[0]?.value ? selectedPermissions : ""}
                 isMulti
               />
             </div>

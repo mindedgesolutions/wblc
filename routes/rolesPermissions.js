@@ -5,6 +5,7 @@ import {
   addNewModule,
   deleteModule,
   getAllModules,
+  getModulesWOPagination,
   updateModule,
 } from "../controller/moduleController.js";
 import {
@@ -16,6 +17,7 @@ import {
   addNewRole,
   deleteRole,
   getAllRoles,
+  getRolesWOPagination,
   rolePermissions,
   updateRole,
 } from "../controller/roleController.js";
@@ -24,6 +26,7 @@ import {
   addNewPermission,
   deletePermission,
   getAllPermissions,
+  getPermissionsWOPagination,
   updatePermission,
 } from "../controller/permissionController.js";
 
@@ -34,6 +37,7 @@ router
   .delete(deleteModule);
 router.patch(`/modules/:id`, validateModule, updateModule);
 router.patch(`/activate-module/:id`, activateModule);
+router.get(`/all-modules`, getModulesWOPagination);
 
 router
   .route(`/roles`)
@@ -43,6 +47,7 @@ router
 router.patch(`/roles/:id`, validateRole, updateRole);
 router.patch(`/activate-role/:id`, activateRole);
 router.post(`/map-role-permissions`, rolePermissions);
+router.get(`/all-roles`, getRolesWOPagination);
 
 router
   .route(`/permissions`)
@@ -51,5 +56,6 @@ router
   .delete(deletePermission);
 router.patch(`/permissions/:id`, validateModule, updatePermission);
 router.patch(`/activate-permission/:id`, activatePermission);
+router.get(`/all-permissions`, getPermissionsWOPagination);
 
 export default router;

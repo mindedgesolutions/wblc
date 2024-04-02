@@ -25,6 +25,11 @@ export const getAllPermissions = async (req, res) => {
   res.status(StatusCodes.OK).json({ data, meta });
 };
 
+export const getPermissionsWOPagination = async (req, res) => {
+  const data = await pool.query(`select * from permissions`, []);
+  res.status(StatusCodes.OK).json({ data });
+};
+
 export const addNewPermission = async (req, res) => {
   const { name, desc } = req.body;
   const nameSlug = slug(name);

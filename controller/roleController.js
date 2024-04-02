@@ -7,10 +7,20 @@ import { BadRequestError } from "../errors/customErrors.js";
 export const getAllRoles = async (req, res) => {
   const { name, page } = req.query;
   const pagination = paginationLogic(page, null);
-  let search = name ? `where name ilike '%${name}%'` : ``;
+  let search = name ? `where roles.name ilike '%${name}%'` : ``;
 
   const data = await pool.query(
-    `select * from roles ${search} order by id desc offset $1 limit $2`,
+    `select roles.*,
+    json_agg(
+      json_build_object(
+        'permission_id', map_role_permission.permission_id,
+        'permission_name', permissions.name
+      )
+    ) as permissions
+    from roles
+    left join map_role_permission on roles.id = map_role_permission.role_id
+    left join permissions on permissions.id = map_role_permission.permission_id
+    ${search} group by roles.id order by roles.id desc offset $1 limit $2`,
     [pagination.offset, pagination.pageLimit]
   );
 
@@ -23,6 +33,11 @@ export const getAllRoles = async (req, res) => {
   };
 
   res.status(StatusCodes.OK).json({ data, meta });
+};
+
+export const getRolesWOPagination = async (req, res) => {
+  const data = await pool.query(`select * from roles`, []);
+  res.status(StatusCodes.OK).json({ data });
 };
 
 export const addNewRole = async (req, res) => {

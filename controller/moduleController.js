@@ -26,6 +26,11 @@ export const getAllModules = async (req, res) => {
   res.status(StatusCodes.OK).json({ data, meta });
 };
 
+export const getModulesWOPagination = async (req, res) => {
+  const data = await pool.query(`select * from modules`, []);
+  res.status(StatusCodes.OK).json({ data });
+};
+
 export const addNewModule = async (req, res) => {
   const { name, desc } = req.body;
   const nameSlug = slug(name);
