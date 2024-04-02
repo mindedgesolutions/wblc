@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideRolePermissionModal,
-  updateCount,
-} from "../../features/rolesPermissions/roleSlice";
+import { hideRolePermissionModal } from "../../features/rolesPermissions/roleSlice";
 import { Modal } from "react-bootstrap";
 import SubmitBtn from "../SubmitBtn";
 import { nanoid } from "@reduxjs/toolkit";
@@ -11,6 +8,7 @@ import Select from "react-select";
 import { splitErrors } from "../../utils/showErrors";
 import customFetch from "../../utils/customFetch";
 import { toast } from "react-toastify";
+import { updateCount } from "../../features/common/commonSlice";
 
 const AssignPermissionToRole = () => {
   const dispatch = useDispatch();

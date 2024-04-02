@@ -32,7 +32,8 @@ const PermissionRole = () => {
   const queryParams = new URLSearchParams(search);
   const resetUrl = `/admin/role-permissions`;
 
-  const { roles, changeCount } = useSelector((store) => store.roles);
+  const { roles } = useSelector((store) => store.roles);
+  const { changeCount } = useSelector((store) => store.common);
   const { permissions } = useSelector((store) => store.permissions);
   const { total } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);

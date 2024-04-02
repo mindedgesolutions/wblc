@@ -9,7 +9,6 @@ const initialState = {
   rolePermissionModal: false,
   userPermissionModal: false,
   selectedRole: "",
-  changeCount: 0,
 };
 
 const roleSlice = createSlice({
@@ -38,14 +37,10 @@ const roleSlice = createSlice({
     showRolePermissionModal: (state, action) => {
       state.rolePermissionModal = true;
       state.selectedRole = action.payload;
-      console.log(action.payload.permissions);
     },
     hideRolePermissionModal: (state) => {
       state.rolePermissionModal = false;
       state.selectedRole = "";
-    },
-    updateCount: (state, action) => {
-      state.changeCount += 1;
     },
   },
 });
@@ -58,6 +53,5 @@ export const {
   hideConfirmModal,
   showRolePermissionModal,
   hideRolePermissionModal,
-  updateCount,
 } = roleSlice.actions;
 export default roleSlice.reducer;
