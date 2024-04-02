@@ -31,7 +31,7 @@ const UserRoles = () => {
   };
 
   return (
-    <div className="mb-3 col-md-6 mt-0 pt-0">
+    <div className="mb-3 col-md-12 mt-0 pt-0">
       <label className="datagrid-title" htmlFor="roles">
         Role/s <span className="text-danger">*</span> :{" "}
       </label>

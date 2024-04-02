@@ -40,16 +40,41 @@ export const addNewUser = async (req, res) => {
     //   `insert into user_master(name, email, mobile, username, password, uuid) values($1, $2, $3, $4, $5, $6) returning id`,
     //   [name, email, mobile, username, password, uuid]
     // );
-    // const userId = data.rows[0].id
+    // const userId = data.rows[0].id;
+
+    // const allRolePermissions = await pool.query(
+    //   `select role_id, permission_id from map_role_permission`
+    // );
 
     // for (const role of roles) {
+    //   const userRoles = await pool.query(
+    //     `insert into map_user_role(user_id, role_id) values($1, $2)`,
+    //     [Number(userId), Number(role.value)]
+    //   );
 
+    //   const element = allRolePermissions.rows.filter(
+    //     (i) => i.role_id === role.value
+    //   );
+    //   element?.map(async (e) => {
+    //     const userPermissions = await pool.query(
+    //       `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
+    //       [Number(userId), e.permission_id]
+    //     );
+    //   });
     // }
 
+    await updateUserRoles(12);
+
     await pool.query("COMMIT");
+
+    res.status(StatusCodes.CREATED).json({ data });
   } catch (error) {
     await pool.query("ROLLBACK");
     console.log(error);
     throw new BadRequestError(`Something went wrong! Please try again later`);
   }
+};
+
+export const updateUserRoles = async (req, res) => {
+  console.log(req.id);
 };
