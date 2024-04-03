@@ -46,7 +46,7 @@ const UserList = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await customFetch.get(`/users/list`, {
+      const response = await customFetch.get(`/users/list-with-roles`, {
         params: {
           name: queryParams.get("s") || "",
           page: queryParams.get("page") || "",

@@ -33,17 +33,23 @@ const AddEditUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formData = new FormData(e.currentTarget);
     let data = Object.fromEntries(formData);
     data = { ...data, roles: selectedRoles };
+    const apiUrl = editId ? `/users/edit-user/${editId}` : `/users/add-user`;
+    const process = editId ? customFetch.patch : customFetch.post;
+    const msg = editId ? `User details updated` : `User added`;
     try {
-      const response = await customFetch.post(`/users/add-user`, data);
-      toast.success(`User created`);
+      const response = await process(apiUrl, data);
+      toast.success(msg);
       dispatch(hideAddModal());
       dispatch(updateCount());
       setForm({ ...form, name: "", email: "", mobile: "" });
+      setIsLoading(false);
       return null;
     } catch (error) {
+      setIsLoading(false);
       splitErrors(error?.response?.data?.msg);
       return error;
     }

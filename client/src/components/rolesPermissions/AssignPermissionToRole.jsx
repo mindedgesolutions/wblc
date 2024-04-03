@@ -41,7 +41,7 @@ const AssignPermissionToRole = () => {
   const [selectedPermissions, setSelectedPermissions] = useState(dbPer || []);
 
   const pers = [];
-  permissions.map((perm) => {
+  permissions?.map((perm) => {
     const element = { value: perm.id, label: perm.name };
     pers.push(element);
   });
@@ -100,7 +100,7 @@ const AssignPermissionToRole = () => {
                 value={inputRole}
                 onChange={(e) => setInputRole(e.target.value)}
               >
-                {roles.map((i) => {
+                {roles?.map((i) => {
                   return (
                     <option key={nanoid()} value={i.id}>
                       {i.name}

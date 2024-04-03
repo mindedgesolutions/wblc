@@ -51,17 +51,14 @@ const PermissionRole = () => {
         },
       });
 
-      if (permissions.length === 0) {
-        const permissions = await customFetch.get(
-          `/roles-permissions/all-permissions`
-        );
-        dispatch(setPermissions(permissions.data.data.rows));
-      }
+      const permissions = await customFetch.get(
+        `/roles-permissions/all-permissions`
+      );
+      dispatch(setPermissions(permissions?.data?.data?.rows));
+      dispatch(setRoles(response?.data?.data?.rows));
+      dispatch(setTotal(response?.data?.meta?.totalRecords));
 
-      dispatch(setRoles(response.data.data.rows));
-      dispatch(setTotal(response.data.meta.totalRecords));
-
-      setMetaData(response.data.meta);
+      setMetaData(response?.data?.meta);
       setIsLoading(false);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
@@ -81,7 +78,7 @@ const PermissionRole = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page"), total, changeCount]);
+  }, [queryParams?.get("s"), queryParams?.get("page"), total, changeCount]);
 
   return (
     <>
@@ -152,7 +149,7 @@ const PermissionRole = () => {
                       </tr>
                     ) : (
                       <>
-                        {roles.map((i, index) => {
+                        {roles?.map((i, index) => {
                           const isActive = i?.is_active ? (
                             <span className="badge bg-success-lt p-1">
                               Active
@@ -166,21 +163,20 @@ const PermissionRole = () => {
                           return (
                             <tr key={nanoid()}>
                               <td>
-                                {serialNo(queryParams.get("page")) + index}.
+                                {serialNo(queryParams?.get("page")) + index}.
                               </td>
                               <td>{i?.name?.toUpperCase()}</td>
                               <td>
-                                {i?.permissions[0]?.permission_id &&
-                                  i?.permissions?.map((a) => {
-                                    return (
-                                      <span
-                                        key={nanoid()}
-                                        className={`badge bg-${randomBadgeBg()}-lt me-1 my-1 fs-6`}
-                                      >
-                                        {a?.permission_name?.toUpperCase()}
-                                      </span>
-                                    );
-                                  })}
+                                {i?.permissions?.map((a) => {
+                                  return (
+                                    <span
+                                      key={nanoid()}
+                                      className={`badge bg-${randomBadgeBg()}-lt me-1 my-1 fs-6`}
+                                    >
+                                      {a?.permission_name?.toUpperCase()}
+                                    </span>
+                                  );
+                                })}
                               </td>
                               <td>{isActive}</td>
                               <td>
