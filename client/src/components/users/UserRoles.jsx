@@ -6,14 +6,17 @@ import { setSelectedRoles } from "../../features/users/userSlice";
 const UserRoles = () => {
   const dispatch = useDispatch();
   const { roles } = useSelector((store) => store.roles);
+  const { users, editId } = useSelector((store) => store.users);
+
+  const user = users.find((i) => i.id === editId);
 
   const dbSch = [];
-  //   userSchemes.data.data.rows.map((scheme) => {
-  //     const element = { value: scheme.scheme_id, label: scheme.schemes_name };
-  //     dbSch.push(element);
-  //   });
+  user?.roles?.map((ro) => {
+    const element = { value: ro.role_id, label: ro.role_name };
+    dbSch.push(element);
+  });
 
-  const [selectedSchemes, setSelectedSchemes] = useState([]);
+  const [selectedSchemes, setSelectedSchemes] = useState(dbSch || []);
 
   const ro = [];
   roles.map((role) => {

@@ -111,7 +111,7 @@ const RoleList = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-header">
-              Total {total} modules found
+              Total {total} roles found
               <div className="col-auto ms-auto d-print-none">
                 <Form method="GET">
                   <div className="btn-list">

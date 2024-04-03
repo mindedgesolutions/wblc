@@ -133,7 +133,7 @@ const PermissionRole = () => {
 
             <div className="card-body p-2">
               <div className="table-responsive">
-                <table className="table table-vcenter text-nowrap datatable table-hover table-bordered card-table fs-5">
+                <table className="table table-vcenter datatable table-hover table-bordered card-table fs-5">
                   <thead>
                     <tr>
                       <th className="bg-dark text-white">SL. NO.</th>
@@ -175,7 +175,7 @@ const PermissionRole = () => {
                                     return (
                                       <span
                                         key={nanoid()}
-                                        className={`badge bg-${randomBadgeBg()}-lt me-1 fs-6`}
+                                        className={`badge bg-${randomBadgeBg()}-lt me-1 my-1 fs-6`}
                                       >
                                         {a?.permission_name?.toUpperCase()}
                                       </span>

@@ -17,7 +17,7 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
-import { serialNo, shortDesc } from "../../utils/functions";
+import { randomBadgeBg, serialNo } from "../../utils/functions";
 import { setTotal } from "../../features/common/commonSlice";
 import {
   setUsers,
@@ -33,10 +33,11 @@ const UserList = () => {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const resetUrl = `/admin/users`;
+  const postTitle = `Default password: welcome123 (lower case)`;
+  const textClass = `text-danger`;
 
   const { users } = useSelector((store) => store.users);
-  const { roles } = useSelector((store) => store.roles);
-  const { total } = useSelector((store) => store.common);
+  const { total, changeCount } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -51,12 +52,12 @@ const UserList = () => {
           page: queryParams.get("page") || "",
         },
       });
-      if (roles.length === 0) {
-        const allRoles = await customFetch.get(`/roles-permissions/roles`, {
-          params: { name: "", page: "" },
-        });
-        dispatch(setRoles(allRoles.data.data.rows));
-      }
+
+      const allRoles = await customFetch.get(`/roles-permissions/all-roles`, {
+        params: { name: "", page: "" },
+      });
+
+      dispatch(setRoles(allRoles.data.data.rows));
       dispatch(setUsers(response.data.data.rows));
       dispatch(setTotal(response.data.meta.totalRecords));
 
@@ -90,14 +91,18 @@ const UserList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page"), total]);
+  }, [queryParams.get("s"), queryParams.get("page"), total, changeCount]);
 
   return (
     <>
       <div className="page-header d-print-none">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
-            <PageHeader title={`List of Users`} breadCrumb="" />
+            <PageHeader
+              title={`List of Users`}
+              postTitle={postTitle}
+              textClass={textClass}
+            />
             <div className="col-auto ms-auto d-print-none">
               <div className="btn-list">
                 <span className="d-none d-sm-inline">
@@ -118,7 +123,7 @@ const UserList = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-header">
-              Total {total} modules found
+              Total {total} users found
               <div className="col-auto ms-auto d-print-none">
                 <Form method="GET">
                   <div className="btn-list">
@@ -156,13 +161,14 @@ const UserList = () => {
 
             <div className="card-body p-2">
               <div className="table-responsive">
-                <table className="table table-vcenter text-nowrap datatable table-hover table-bordered card-table fs-5">
+                <table className="table table-vcenter datatable table-hover table-bordered card-table fs-5">
                   <thead>
                     <tr>
                       <th className="bg-dark text-white">SL. NO.</th>
                       <th className="bg-dark text-white">Name</th>
                       <th className="bg-dark text-white">Email</th>
                       <th className="bg-dark text-white">Mobile</th>
+                      <th className="bg-dark text-white">Username</th>
                       <th className="bg-dark text-white">Role</th>
                       <th className="bg-dark text-white">Status</th>
                       <th className="bg-dark text-white"></th>
@@ -194,14 +200,28 @@ const UserList = () => {
                                 {serialNo(queryParams.get("page")) + index}.
                               </td>
                               <td>{i?.name?.toUpperCase()}</td>
-                              <td>{shortDesc(i?.description)}</td>
-                              <td>{isActive}</td>
+                              <td>{i?.email}</td>
+                              <td>{i?.mobile}</td>
+                              <td>{i?.username}</td>
                               <td>
+                                {i?.roles?.map((r) => {
+                                  return (
+                                    <span
+                                      key={nanoid()}
+                                      className={`badge bg-${randomBadgeBg()}-lt me-1 my-1 fs-6`}
+                                    >
+                                      {r?.role_name?.toUpperCase()}
+                                    </span>
+                                  );
+                                })}
+                              </td>
+                              <td>{isActive}</td>
+                              <td className="text-nowrap">
                                 {i?.is_active ? (
                                   <>
                                     <button
                                       type="button"
-                                      className="btn btn-warning btn-sm me-3"
+                                      className="btn btn-warning btn-sm me-2"
                                       onClick={() =>
                                         dispatch(showAddModal(i?.id))
                                       }

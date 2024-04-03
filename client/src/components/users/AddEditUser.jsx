@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SubmitBtn from "../SubmitBtn";
 import { hideAddModal } from "../../features/users/userSlice";
@@ -6,13 +6,14 @@ import { Modal } from "react-bootstrap";
 import UserRoles from "./UserRoles";
 import { splitErrors } from "../../utils/showErrors";
 import customFetch from "../../utils/customFetch";
+import { toast } from "react-toastify";
+import { updateCount } from "../../features/common/commonSlice";
 
 const AddEditUser = () => {
   const dispatch = useDispatch();
   const { users, addModal, editId, selectedRoles } = useSelector(
     (store) => store.users
   );
-  const { total } = useSelector((store) => store.common);
   const editData = editId && users.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({
@@ -37,12 +38,26 @@ const AddEditUser = () => {
     data = { ...data, roles: selectedRoles };
     try {
       const response = await customFetch.post(`/users/add-user`, data);
+      toast.success(`User created`);
+      dispatch(hideAddModal());
+      dispatch(updateCount());
+      setForm({ ...form, name: "", email: "", mobile: "" });
       return null;
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       return error;
     }
   };
+
+  useEffect(() => {
+    setForm({
+      ...form,
+      name: editId ? editData.name : "",
+      email: editId ? editData.email : "",
+      mobile: editId ? editData.mobile : "",
+      username: editId ? editData.username : "",
+    });
+  }, [editId]);
 
   return (
     <Modal show={addModal} size="lg" onHide={handleClose}>
