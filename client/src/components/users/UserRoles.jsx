@@ -19,7 +19,7 @@ const UserRoles = () => {
   const [selectedSchemes, setSelectedSchemes] = useState(dbSch || []);
 
   const ro = [];
-  allRoles.map((role) => {
+  allRoles?.map((role) => {
     const element = { value: role.id, label: role.name };
     ro.push(element);
   });
@@ -43,7 +43,7 @@ const UserRoles = () => {
         name="roles"
         options={options}
         onChange={handleChange}
-        value={selectedSchemes}
+        value={selectedSchemes[0]?.value ? selectedSchemes : ""}
         isMulti
       />
     </div>

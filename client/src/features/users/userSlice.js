@@ -36,6 +36,9 @@ const userSlice = createSlice({
     setSelectedRoles: (state, action) => {
       state.selectedRoles = action.payload;
     },
+    underSelectedRoles: (state) => {
+      state.selectedRoles = [];
+    },
   },
 });
 
@@ -46,5 +49,6 @@ export const {
   showConfirmModal,
   hideConfirmModal,
   setSelectedRoles,
+  underSelectedRoles,
 } = userSlice.actions;
 export default userSlice.reducer;

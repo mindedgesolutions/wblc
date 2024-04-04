@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SubmitBtn from "../SubmitBtn";
-import { hideAddModal } from "../../features/users/userSlice";
+import {
+  hideAddModal,
+  underSelectedRoles,
+} from "../../features/users/userSlice";
 import { Modal } from "react-bootstrap";
 import UserRoles from "./UserRoles";
 import { splitErrors } from "../../utils/showErrors";
@@ -30,6 +33,7 @@ const AddEditUser = () => {
 
   const handleClose = () => {
     dispatch(hideAddModal());
+    dispatch(underSelectedRoles());
     setForm({ ...form, name: "", email: "", mobile: "", username: "" });
   };
 

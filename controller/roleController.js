@@ -97,21 +97,32 @@ export const rolePermissions = async (req, res) => {
   const { roleId, permissions } = req.body;
 
   try {
-    await pool.query(`BEGIN`);
+    if (permissions.length > 0) {
+      await pool.query(`delete from map_role_permission where role_id=$1`, [
+        roleId,
+      ]);
+      // const userIds = await pool.query(
+      //   `delete from map_user_permission where role_id=$1 returning user_id`,
+      //   [roleId]
+      // );
 
-    await pool.query(`delete from map_role_permission where role_id=$1`, [
-      Number(roleId),
-    ]);
+      for (const permission of permissions) {
+        const permissionId = permission.value;
+        await pool.query(
+          `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
+          [roleId, permissionId]
+        );
+      }
 
-    for (const permission of permissions) {
-      const permissionId = Number(permission.value);
-      await pool.query(
-        `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
-        [Number(roleId), permissionId]
-      );
+      // for (const user of userIds.rows) {
+      //   for (const permission of permissions) {
+      //     await pool.query(
+      //       `insert into map_user_permission(user_id, permission_id, role_id) values($1, $2, $3)`,
+      //       [Number(user.user_id), permission.value, roleId]
+      //     );
+      //   }
+      // }
     }
-
-    await pool.query(`COMMIT`);
 
     res.status(StatusCodes.CREATED).json({ data: `success` });
   } catch (error) {
