@@ -6,6 +6,9 @@ const initialState = {
   confirmModal: false,
   deleteParams: {},
   editId: "",
+  userPermissionModal: false,
+  userId: "",
+  allPermissions: [],
 };
 
 const permissionSlice = createSlice({
@@ -31,6 +34,17 @@ const permissionSlice = createSlice({
       state.confirmModal = false;
       state.deleteParams = {};
     },
+    showUserPermissionModal: (state, action) => {
+      state.userPermissionModal = true;
+      state.userId = action.payload;
+    },
+    hideUserPermissionModal: (state) => {
+      state.userPermissionModal = false;
+      state.userId = "";
+    },
+    setAllPermissions: (state, action) => {
+      state.allPermissions = action.payload;
+    },
   },
 });
 
@@ -40,5 +54,8 @@ export const {
   hideAddModal,
   showConfirmModal,
   hideConfirmModal,
+  showUserPermissionModal,
+  hideUserPermissionModal,
+  setAllPermissions,
 } = permissionSlice.actions;
 export default permissionSlice.reducer;

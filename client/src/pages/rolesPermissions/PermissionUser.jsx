@@ -4,7 +4,7 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import {
-  AssignPermissionToRole,
+  AssignPermissionToUser,
   PageHeader,
   PageWrapper,
   PaginationContainer,
@@ -15,12 +15,12 @@ import { IoReloadSharp } from "react-icons/io5";
 import { nanoid } from "nanoid";
 import { randomBadgeBg, serialNo } from "../../utils/functions";
 import { MdModeEdit } from "react-icons/md";
-import {
-  setRoles,
-  showRolePermissionModal,
-} from "../../features/rolesPermissions/roleSlice";
 import { setTotal } from "../../features/common/commonSlice";
-import { setPermissions } from "../../features/rolesPermissions/permissionSlice";
+import {
+  setAllPermissions,
+  showUserPermissionModal,
+} from "../../features/rolesPermissions/permissionSlice";
+import { setUsers } from "../../features/users/userSlice";
 
 const PermissionUser = () => {
   document.title = `User-wise Permissions | ${
@@ -33,9 +33,8 @@ const PermissionUser = () => {
   const resetUrl = `/admin/user-permissions`;
 
   const { users } = useSelector((store) => store.users);
-  const { changeCount } = useSelector((store) => store.common);
-  const { permissions } = useSelector((store) => store.permissions);
-  const { total } = useSelector((store) => store.common);
+  const { total, changeCount } = useSelector((store) => store.common);
+  const { allPermissions } = useSelector((store) => store.permissions);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -44,18 +43,20 @@ const PermissionUser = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await customFetch.get(`/roles-permissions/roles`, {
+      const response = await customFetch.get(`/users/list-with-permissions`, {
         params: {
           name: queryParams.get("s") || "",
           page: queryParams.get("page") || "",
         },
       });
 
-      const permissions = await customFetch.get(
-        `/roles-permissions/all-permissions`
-      );
-      dispatch(setPermissions(permissions?.data?.data?.rows));
-      dispatch(setRoles(response?.data?.data?.rows));
+      if (allPermissions.length === 0) {
+        const permissions = await customFetch.get(
+          `/roles-permissions/all-permissions`
+        );
+        dispatch(setAllPermissions(permissions?.data?.data?.rows));
+      }
+      dispatch(setUsers(response?.data?.data?.rows));
       dispatch(setTotal(response?.data?.meta?.totalRecords));
 
       setMetaData(response?.data?.meta);
@@ -134,32 +135,21 @@ const PermissionUser = () => {
                   <thead>
                     <tr>
                       <th className="bg-dark text-white">SL. NO.</th>
-                      <th className="bg-dark text-white">Roles</th>
+                      <th className="bg-dark text-white">User</th>
                       <th className="bg-dark text-white">Permissions</th>
-                      <th className="bg-dark text-white">Role Status</th>
                       <th className="bg-dark text-white"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {isLoading ? (
                       <tr>
-                        <td colSpan={5}>
+                        <td colSpan={4}>
                           <TableLoader />
                         </td>
                       </tr>
                     ) : (
                       <>
-                        {roles?.map((i, index) => {
-                          const isActive = i?.is_active ? (
-                            <span className="badge bg-success-lt p-1">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="badge bg-danger-lt p-1">
-                              Inactive
-                            </span>
-                          );
-
+                        {users?.map((i, index) => {
                           return (
                             <tr key={nanoid()}>
                               <td>
@@ -178,13 +168,12 @@ const PermissionUser = () => {
                                   );
                                 })}
                               </td>
-                              <td>{isActive}</td>
                               <td>
                                 <button
                                   type="button"
                                   className="btn btn-warning btn-sm me-3"
                                   onClick={() =>
-                                    dispatch(showRolePermissionModal(i?.id))
+                                    dispatch(showUserPermissionModal(i?.id))
                                   }
                                 >
                                   <MdModeEdit size={14} />
@@ -201,7 +190,7 @@ const PermissionUser = () => {
             </div>
           </div>
         </div>
-        <AssignPermissionToRole />
+        <AssignPermissionToUser />
 
         <PaginationContainer pageCount={pageCount} currentPage={currentPage} />
       </PageWrapper>

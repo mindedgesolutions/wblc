@@ -7,6 +7,7 @@ const initialState = {
   deleteParams: {},
   editId: "",
   selectedRoles: [],
+  selectedPermissions: [],
 };
 
 const userSlice = createSlice({

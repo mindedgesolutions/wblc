@@ -7,7 +7,6 @@ const initialState = {
   deleteParams: {},
   editId: "",
   rolePermissionModal: false,
-  userPermissionModal: false,
   selectedRole: "",
 };
 

@@ -35,10 +35,14 @@ export const getAllRoles = async (req, res) => {
   res.status(StatusCodes.OK).json({ data, meta });
 };
 
+// ------
+
 export const getRolesWOPagination = async (req, res) => {
   const data = await pool.query(`select * from roles`, []);
   res.status(StatusCodes.OK).json({ data });
 };
+
+// ------
 
 export const addNewRole = async (req, res) => {
   const { name, desc } = req.body;
@@ -52,6 +56,8 @@ export const addNewRole = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ data });
 };
 
+// ------
+
 export const deleteRole = async (req, res) => {
   const { id } = req.query;
   const data = await pool.query(
@@ -61,6 +67,8 @@ export const deleteRole = async (req, res) => {
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
 
+// ------
+
 export const activateRole = async (req, res) => {
   const { id } = req.params;
   const data = await pool.query(`update roles set is_active=true where id=$1`, [
@@ -68,6 +76,8 @@ export const activateRole = async (req, res) => {
   ]);
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
+
+// ------
 
 export const updateRole = async (req, res) => {
   const { id } = req.params;
@@ -80,6 +90,8 @@ export const updateRole = async (req, res) => {
   );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
+
+// ------
 
 export const rolePermissions = async (req, res) => {
   const { roleId, permissions } = req.body;

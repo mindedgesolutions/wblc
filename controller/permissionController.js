@@ -25,10 +25,14 @@ export const getAllPermissions = async (req, res) => {
   res.status(StatusCodes.OK).json({ data, meta });
 };
 
+// ------
+
 export const getPermissionsWOPagination = async (req, res) => {
   const data = await pool.query(`select * from permissions`, []);
   res.status(StatusCodes.OK).json({ data });
 };
+
+// ------
 
 export const addNewPermission = async (req, res) => {
   const { name, desc } = req.body;
@@ -41,6 +45,8 @@ export const addNewPermission = async (req, res) => {
   );
   res.status(StatusCodes.CREATED).json({ data });
 };
+
+// ------
 
 export const deletePermission = async (req, res) => {
   const { id } = req.query;
@@ -68,6 +74,8 @@ export const deletePermission = async (req, res) => {
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
 
+// ------
+
 export const activatePermission = async (req, res) => {
   const { id } = req.params;
   const data = await pool.query(
@@ -76,6 +84,8 @@ export const activatePermission = async (req, res) => {
   );
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
+
+// ------
 
 export const updatePermission = async (req, res) => {
   const { id } = req.params;

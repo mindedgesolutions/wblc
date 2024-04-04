@@ -46,6 +46,34 @@ export const getAllUserPermissions = async (req, res) => {
   const { name, page } = req.query;
   const pagination = paginationLogic(page, null);
   let search = name ? `where um.name ilike '%${name}%'` : ``;
+
+  const data = await pool.query(
+    `select um.*,
+    json_agg(
+      json_build_object(
+        'permission_id', mup.permission_id,
+        'permission_name', permissions.name
+      )
+    ) as permissions
+    from user_master as um
+    left join map_user_permission mup on mup.user_id = um.id
+    left join permissions on permissions.id = mup.permission_id
+    ${search} group  by um.id order by um.id desc offset $1 limit $2`,
+    [pagination.offset, pagination.pageLimit]
+  );
+
+  const records = await pool.query(
+    `select * from user_master um ${search}`,
+    []
+  );
+  const totalPages = Math.ceil(records.rowCount / pagination.pageLimit);
+  const meta = {
+    totalPages: totalPages,
+    currentPage: pagination.pageNo,
+    totalRecords: records.rowCount,
+  };
+
+  res.status(StatusCodes.OK).json({ data, meta });
 };
 
 // ------
@@ -147,5 +175,28 @@ export const editUser = async (req, res) => {
     await pool.query("ROLLBACK");
     console.log(error);
     throw new BadRequestError(`Something went wrong! Please try again later`);
+  }
+};
+
+// ------
+
+export const updateUserPermission = async (req, res) => {
+  const { userId, permissions } = req.body;
+  try {
+    await pool.query(`delete from map_user_permission where user_id=$1`, [
+      userId,
+    ]);
+
+    permissions.map(async (i) => {
+      await pool.query(
+        `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
+        [userId, i.value]
+      );
+    });
+
+    res.status(StatusCodes.OK).json({ data: `success` });
+  } catch (error) {
+    await pool.query(`ROLLBACK`);
+    return error;
   }
 };
