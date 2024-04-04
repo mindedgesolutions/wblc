@@ -15,6 +15,7 @@ const AddEditUser = () => {
     (store) => store.users
   );
   const editData = editId && users.find((i) => i.id === editId);
+
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -29,6 +30,7 @@ const AddEditUser = () => {
 
   const handleClose = () => {
     dispatch(hideAddModal());
+    setForm({ ...form, name: "", email: "", mobile: "", username: "" });
   };
 
   const handleSubmit = async (e) => {

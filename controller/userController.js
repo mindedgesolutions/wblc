@@ -8,7 +8,7 @@ import { createUsername, currentDate } from "../utils/functions.js";
 
 export const getAllUsers = async (req, res) => {
   const { name, page } = req.query;
-  const pagination = paginationLogic(page, null);
+  const pagination = paginationLogic(page, process.env.USERS_PER_PAGE);
   let search = name ? `where um.name ilike '%${name}%'` : ``;
 
   const data = await pool.query(
@@ -129,7 +129,7 @@ export const addNewUser = async (req, res) => {
 // ------
 
 export const editUser = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   const { name, email, mobile, roles } = req.body;
   const dateTime = currentDate();
 
@@ -137,35 +137,33 @@ export const editUser = async (req, res) => {
     // await pool.query("BEGIN");
 
     const data = await pool.query(
-      `update user_master set name=$1, email=$2, mobile=$3, updated_at=$4 where id=$5`,
+      `update user_master set name=$1, email=$2, mobile=$3, updated_at=$4 where id=$5 returning id`,
       [name, email, mobile, dateTime, id]
     );
 
-    if (id) {
-      const allRolePermissions = await pool.query(
-        `select role_id, permission_id from map_role_permission`
+    const allRolePermissions = await pool.query(
+      `select role_id, permission_id from map_role_permission`
+    );
+
+    await pool.query(`delete from map_user_role where user_id=$1`, [id]);
+    await pool.query(`delete from map_user_permission where user_id=$1`, [id]);
+
+    for (const role of roles) {
+      console.log(id);
+      await pool.query(
+        `insert into map_user_role(user_id, role_id) values($1, $2)`,
+        [id, Number(role.value)]
       );
 
-      await pool.query(`delete from map_user_role where user_id=$1`, [id]);
-
-      await pool.query(`delete from map_user_permission where user_id`, [id]);
-
-      for (const role of roles) {
-        const userRoles = await pool.query(
-          `insert into map_user_role(user_id, role_id) values($1, $2)`,
-          [Number(id), Number(role.value)]
+      const element = allRolePermissions.rows.filter(
+        (i) => i.role_id === role.value
+      );
+      element?.map(async (e) => {
+        await pool.query(
+          `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
+          [id, e.permission_id]
         );
-
-        const element = allRolePermissions.rows.filter(
-          (i) => i.role_id === role.value
-        );
-        element?.map(async (e) => {
-          const userPermissions = await pool.query(
-            `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
-            [Number(id), e.permission_id]
-          );
-        });
-      }
+      });
     }
 
     // await pool.query("COMMIT");

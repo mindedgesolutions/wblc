@@ -24,7 +24,10 @@ import {
   showAddModal,
   showConfirmModal,
 } from "../../features/users/userSlice";
-import { setRoles } from "../../features/rolesPermissions/roleSlice";
+import {
+  setAllRoles,
+  setRoles,
+} from "../../features/rolesPermissions/roleSlice";
 
 const UserList = () => {
   document.title = `List of Users | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -38,6 +41,7 @@ const UserList = () => {
 
   const { users } = useSelector((store) => store.users);
   const { total, changeCount } = useSelector((store) => store.common);
+  const { allRoles } = useSelector((store) => store.roles);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -53,11 +57,13 @@ const UserList = () => {
         },
       });
 
-      const allRoles = await customFetch.get(`/roles-permissions/all-roles`, {
-        params: { name: "", page: "" },
-      });
+      if (allRoles.length === 0) {
+        const allRoles = await customFetch.get(`/roles-permissions/all-roles`, {
+          params: { name: "", page: "" },
+        });
+        dispatch(setAllRoles(allRoles.data.data.rows));
+      }
 
-      dispatch(setRoles(allRoles.data.data.rows));
       dispatch(setUsers(response.data.data.rows));
       dispatch(setTotal(response.data.meta.totalRecords));
 
@@ -250,7 +256,7 @@ const UserList = () => {
                     ) : (
                       <>
                         <tr>
-                          <td colSpan={7} className="text-center">
+                          <td colSpan={8} className="text-center">
                             NO DATA FOUND
                           </td>
                         </tr>

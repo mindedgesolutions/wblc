@@ -13,9 +13,10 @@ export const validateUser = withValidationErrors([
     .withMessage(`Invalid mobile no.`)
     .custom(async (value, { req }) => {
       const { id } = req.params;
+      const condition = id ? ` and id!=${id}` : ``;
       const check = await pool.query(
-        `select count(id) from user_master where mobile=$1 and id!=$2`,
-        [value, id]
+        `select count(id) from user_master where mobile=$1 ${condition}`,
+        [value]
       );
       if (check.rows[0].count > 0) {
         throw new BadRequestError(`Mobile no. exists`);
@@ -27,9 +28,10 @@ export const validateUser = withValidationErrors([
     .withMessage(`Enter a valid email address`)
     .custom(async (value, { req }) => {
       const { id } = req.params;
+      const condition = id ? ` and id!=${id}` : ``;
       const check = await pool.query(
-        `select count(id) from user_master where email=$1 and id!=$2`,
-        [value, id]
+        `select count(id) from user_master where email=$1 ${condition}`,
+        [value]
       );
       if (check.rows[0].count > 0) {
         throw new BadRequestError(`Email exists`);

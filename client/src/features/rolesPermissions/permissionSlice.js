@@ -25,6 +25,7 @@ const permissionSlice = createSlice({
     },
     hideAddModal: (state) => {
       state.addModal = false;
+      state.editId = "";
     },
     showConfirmModal: (state, action) => {
       state.confirmModal = true;
