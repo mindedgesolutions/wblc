@@ -34,7 +34,7 @@ const PermissionList = () => {
   const resetUrl = `/admin/permissions`;
 
   const { permissions } = useSelector((store) => store.permissions);
-  const { total } = useSelector((store) => store.common);
+  const { total, changeCount } = useSelector((store) => store.common);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -83,7 +83,7 @@ const PermissionList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.get("s"), queryParams.get("page"), total]);
+  }, [queryParams.get("s"), queryParams.get("page"), changeCount]);
 
   return (
     <>

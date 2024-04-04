@@ -8,19 +8,19 @@ import {
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import { toast } from "react-toastify";
-import { setTotal } from "../../features/common/commonSlice";
+import { updateCount } from "../../features/common/commonSlice";
 import SubmitBtn from "../SubmitBtn";
 
 const AddEditModule = () => {
   const dispatch = useDispatch();
   const { modules, addModal, editId } = useSelector((store) => store.modules);
-  const { total } = useSelector((store) => store.common);
   const editData = editId && modules.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({ name: "", desc: "" });
 
   useEffect(() => {
     setForm({
+      ...form,
       name: editId ? editData?.name : "",
       desc: editId ? editData?.description : "",
     });
@@ -46,22 +46,11 @@ const AddEditModule = () => {
     const msg = editId ? `Module details updated` : `Module added`;
     try {
       const response = await process(api, data);
-
-      if (!editId) {
-        const newModule = response.data.data.rows[0];
-        const newTotal = Number(total) + 1;
-        dispatch(setModules([...modules, newModule]));
-        dispatch(setTotal(newTotal));
-      } else {
-        const newObject = response.data.data.rows[0];
-
-        const reducedModules = modules.filter((i) => i.id !== editId);
-        const newModules = [...reducedModules, newObject];
-        dispatch(setModules(newModules));
-      }
+      dispatch(updateCount());
       dispatch(hideAddModal());
-      toast.success(msg);
+      setForm({ ...form, name: "", desc: "" });
       setIsLoading(false);
+      toast.success(msg);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       setIsLoading(false);

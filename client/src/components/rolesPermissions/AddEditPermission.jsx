@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import { toast } from "react-toastify";
-import { setTotal } from "../../features/common/commonSlice";
+import { setTotal, updateCount } from "../../features/common/commonSlice";
 import SubmitBtn from "../SubmitBtn";
 import {
   setPermissions,
@@ -48,20 +48,9 @@ const AddEditPermission = () => {
     const msg = editId ? `Permission updated` : `Permission added`;
     try {
       const response = await process(api, data);
-
-      if (!editId) {
-        const newPermission = response.data.data.rows[0];
-        const newTotal = Number(total) + 1;
-        dispatch(setPermissions([...permissions, newPermission]));
-        dispatch(setTotal(newTotal));
-      } else {
-        const newObject = response.data.data.rows[0];
-
-        const reducedPermissions = permissions.filter((i) => i.id !== editId);
-        const newPermissions = [...reducedPermissions, newObject];
-        dispatch(setPermissions(newPermissions));
-      }
+      dispatch(updateCount());
       dispatch(hideAddModal());
+      setForm({ ...form, name: "", desc: "" });
       toast.success(msg);
       setIsLoading(false);
     } catch (error) {

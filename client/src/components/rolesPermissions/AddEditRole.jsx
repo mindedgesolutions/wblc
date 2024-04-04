@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { setTotal } from "../../features/common/commonSlice";
-import {
-  setRoles,
-  hideAddModal,
-} from "../../features/rolesPermissions/roleSlice";
+import { updateCount } from "../../features/common/commonSlice";
+import { hideAddModal } from "../../features/rolesPermissions/roleSlice";
 import customFetch from "../../utils/customFetch";
 import { splitErrors } from "../../utils/showErrors";
 import SubmitBtn from "../SubmitBtn";
@@ -13,7 +10,6 @@ import SubmitBtn from "../SubmitBtn";
 const AddEditRole = () => {
   const dispatch = useDispatch();
   const { roles, addModal, editId } = useSelector((store) => store.roles);
-  const { total } = useSelector((store) => store.common);
   const [form, setForm] = useState({ name: "", desc: "" });
   const editData = editId && roles.find((i) => i.id === editId);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,19 +41,7 @@ const AddEditRole = () => {
     const msg = editId ? `Role details updated` : `Role added`;
     try {
       const response = await process(api, data);
-
-      if (!editId) {
-        const newRole = response.data.data.rows[0];
-        const newTotal = Number(total) + 1;
-        dispatch(setRoles([...roles, newRole]));
-        dispatch(setTotal(newTotal));
-      } else {
-        const newObject = response.data.data.rows[0];
-
-        const reducedRoles = roles.filter((i) => i.id !== editId);
-        const newRoles = [...reducedRoles, newObject];
-        dispatch(setRoles(newRoles));
-      }
+      dispatch(updateCount());
       dispatch(hideAddModal());
       toast.success(msg);
       setIsLoading(false);
