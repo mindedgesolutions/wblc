@@ -8,7 +8,7 @@ import { createUsername, currentDate } from "../utils/functions.js";
 
 export const getAllUsers = async (req, res) => {
   const { name, page } = req.query;
-  const pagination = paginationLogic(page, process.env.USERS_PER_PAGE);
+  const pagination = paginationLogic(page, null);
   let search = name ? `where um.name ilike '%${name}%'` : ``;
 
   const data = await pool.query(
