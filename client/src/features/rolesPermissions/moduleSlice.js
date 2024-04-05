@@ -6,6 +6,7 @@ const initialState = {
   confirmModal: false,
   deleteParams: {},
   editId: "",
+  allModules: [],
 };
 
 const moduleSlice = createSlice({
@@ -31,6 +32,9 @@ const moduleSlice = createSlice({
       state.confirmModal = false;
       state.deleteParams = {};
     },
+    setAllModules: (state, action) => {
+      state.allModules = action.payload;
+    },
   },
 });
 
@@ -40,5 +44,6 @@ export const {
   hideAddModal,
   showConfirmModal,
   hideConfirmModal,
+  setAllModules,
 } = moduleSlice.actions;
 export default moduleSlice.reducer;
