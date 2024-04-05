@@ -1,8 +1,7 @@
 export { default as Login } from "./auth/Login";
+export { default as ForgotPassword } from "./auth/ForgotPassword";
 export { default as Error } from "./Error";
 export { default as Layout } from "./Layout";
-export { default as AdminDashboard } from "./users/AdminDashboard";
-export { default as UserDashboard } from "./users/UserDashboard";
 export { default as ChangePassword } from "./auth/ChangePassword";
 export { default as Profile } from "./auth/Profile";
 export { default as ModuleList } from "./rolesPermissions/ModuleList";
@@ -11,3 +10,4 @@ export { default as PermissionRole } from "./rolesPermissions/PermissionRole";
 export { default as PermissionUser } from "./rolesPermissions/PermissionUser";
 export { default as RoleList } from "./rolesPermissions/RoleList";
 export { default as UserList } from "./users/UserList";
+export { default as AdminDashboard } from "./dashboard/AdminDashboard";

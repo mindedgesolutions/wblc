@@ -2,14 +2,24 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import * as Wb from "./pages";
 import { store } from "./store";
 
+import { action as loginAction } from "./pages/auth/Login";
+
 const router = createBrowserRouter([
-  { path: "/", index: true, element: <Wb.Login />, errorElement: <Wb.Error /> },
+  {
+    path: "/",
+    index: true,
+    element: <Wb.Login />,
+    errorElement: <Wb.Error />,
+    action: loginAction(store),
+  },
+  { path: "/forgot-password", element: <Wb.ForgotPassword /> },
   { path: "/change-password", element: <Wb.ChangePassword /> },
   { path: "/profile", element: <Wb.Profile /> },
   {
     path: "/admin",
     element: <Wb.Layout />,
     children: [
+      { path: "dashboard", element: <Wb.AdminDashboard /> },
       { path: "users", element: <Wb.UserList /> },
       { path: "modules", element: <Wb.ModuleList /> },
       { path: "roles", element: <Wb.RoleList /> },

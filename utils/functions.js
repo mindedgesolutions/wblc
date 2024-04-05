@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import pool from "../db.js";
 import slug from "slug";
+import jwt from "jsonwebtoken";
 
 export const createUsername = async (name) => {
   let username = slug(name);
@@ -30,3 +31,17 @@ export const formatStartDate = (date) => {
 
   return filterStart;
 };
+
+// JWT token starts ------
+export const createJWT = (payload) => {
+  const token = jwt.sign(payload, process.env.JWT_SECRET_ADMIN, {
+    expiresIn: process.env.JWT_EXPIRY,
+  });
+  return token;
+};
+
+export const verifyJWT = (token) => {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_ADMIN);
+  return decoded;
+};
+// JWT token ends ------

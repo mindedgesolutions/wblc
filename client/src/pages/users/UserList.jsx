@@ -24,10 +24,7 @@ import {
   showAddModal,
   showConfirmModal,
 } from "../../features/users/userSlice";
-import {
-  setAllRoles,
-  setRoles,
-} from "../../features/rolesPermissions/roleSlice";
+import { setAllRoles } from "../../features/rolesPermissions/roleSlice";
 
 const UserList = () => {
   document.title = `List of Users | ${import.meta.env.VITE_ADMIN_TITLE}`;

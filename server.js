@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 
 // Routes ---
+import authRoute from "./routes/authRoutes.js";
 import rolesPermissions from "./routes/rolesPermissions.js";
 import userRoute from "./routes/userRoutes.js";
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // API starts ---
+app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/roles-permissions", rolesPermissions);
 app.use("/api/v1/users", userRoute);
 // API ends ---

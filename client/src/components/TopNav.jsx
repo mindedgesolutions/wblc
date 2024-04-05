@@ -3,7 +3,7 @@ import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import Avatar from "../assets/dist/images/000m.jpg";
 import { Link } from "react-router-dom";
 
-const TopNav = () => {
+const TopNav = ({ logout }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(
     localStorage.getItem("theme") === "dark" ? true : false
   );
@@ -73,7 +73,7 @@ const TopNav = () => {
               <Link to="/admin/change-password" className="dropdown-item">
                 Change Password
               </Link>
-              <button type="button" className="dropdown-item">
+              <button type="button" className="dropdown-item" onClick={logout}>
                 Logout
               </button>
             </div>
