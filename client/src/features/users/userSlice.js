@@ -8,6 +8,9 @@ const initialState = {
   editId: "",
   selectedRoles: [],
   selectedPermissions: [],
+  loggedinUser: {},
+  userRoles: [],
+  userPermissions: [],
 };
 
 const userSlice = createSlice({
@@ -39,6 +42,9 @@ const userSlice = createSlice({
     underSelectedRoles: (state) => {
       state.selectedRoles = [];
     },
+    setLoggedinUser: (state, action) => {
+      state.loggedinUser = action.payload.user;
+    },
   },
 });
 
@@ -50,5 +56,6 @@ export const {
   hideConfirmModal,
   setSelectedRoles,
   underSelectedRoles,
+  setLoggedinUser,
 } = userSlice.actions;
 export default userSlice.reducer;

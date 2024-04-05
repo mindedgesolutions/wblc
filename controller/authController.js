@@ -22,7 +22,7 @@ export const adminLogin = async (req, res) => {
     throw new BadRequestError(`Incorrect password! Please try again`);
   }
   const token = createJWT({
-    uid: user.rows[0].uuid,
+    uuid: user.rows[0].uuid,
   });
   const oneDay = 1000 * 60 * 60 * 24;
   res.cookie("token", token, {

@@ -78,6 +78,33 @@ export const getAllUserPermissions = async (req, res) => {
 
 // ------
 
+export const getUserDetails = async (req, res) => {
+  const { uuid } = req.uuid;
+  const user = await pool.query(
+    `select id, name, email, mobile from user_master where uuid='${uuid}'`,
+    []
+  );
+
+  let roles, permissions;
+
+  if (user.rows[0].id) {
+    roles = await pool.query(
+      `select mur.role_id, roles.name from map_user_role mur left join roles on mur.role_id = roles.id where mur.user_id=$1`,
+      [user.rows[0].id]
+    );
+
+    permissions = await pool.query(
+      `select mup.permission_id, permissions.name from map_user_permission mup left join permissions on mup.permission_id = permissions.id where mup.user_id=$1`,
+      [user.rows[0].id]
+    );
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ user: user, roles: roles, permissions: permissions });
+};
+
+// ------
+
 export const addNewUser = async (req, res) => {
   const { name, email, mobile, roles } = req.body;
   const uuid = uuidv4();

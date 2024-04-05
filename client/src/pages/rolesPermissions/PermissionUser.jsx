@@ -63,6 +63,9 @@ const PermissionUser = () => {
       setIsLoading(false);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
+      if (error?.response?.status === 401) {
+        navigate("/");
+      }
       setIsLoading(false);
       return error;
     }

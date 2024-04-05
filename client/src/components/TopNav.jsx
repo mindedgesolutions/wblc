@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import Avatar from "../assets/dist/images/000m.jpg";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const TopNav = ({ logout }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(
     localStorage.getItem("theme") === "dark" ? true : false
   );
+  const { loggedinUser } = useSelector((store) => store.users);
 
   const toggleTheme = () => {
     const newTheme = !isDarkTheme;
@@ -57,9 +59,9 @@ const TopNav = ({ logout }) => {
             >
               <img src={Avatar} className="avatar avatar-sm" alt="" />
               <div className="d-none d-xl-block ps-2">
-                <div className="fw-bold">{"Souvik Nag"}</div>
+                <div className="fw-bold">{loggedinUser.name}</div>
                 <div className="mt-1 small text-muted">
-                  {"s.nag26@gmail.com"}
+                  {loggedinUser.email}
                 </div>
               </div>
             </a>

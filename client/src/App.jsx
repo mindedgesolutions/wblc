@@ -4,6 +4,8 @@ import { store } from "./store";
 
 import { action as loginAction } from "./pages/auth/Login";
 
+import { loader as layoutLoader } from "./pages/Layout";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,6 +20,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <Wb.Layout />,
+    loader: layoutLoader(store),
     children: [
       { path: "dashboard", element: <Wb.AdminDashboard /> },
       { path: "users", element: <Wb.UserList /> },

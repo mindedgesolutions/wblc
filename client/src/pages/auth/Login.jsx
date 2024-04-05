@@ -8,7 +8,9 @@ import { setCaptcha } from "../../features/auth/authSlice";
 import { splitErrors } from "../../utils/showErrors";
 import customFetch from "../../utils/customFetch";
 import { toast } from "react-toastify";
+import { SubmitBtn } from "../../components";
 
+// Action starts ------
 export const action =
   (store) =>
   async ({ request }) => {
@@ -28,6 +30,7 @@ export const action =
     }
   };
 
+// Main component starts ------
 const Login = () => {
   document.title = `Admin Login | ${import.meta.env.VITE_ADMIN_TITLE}`;
   const dispatch = useDispatch();
@@ -134,7 +137,7 @@ const Login = () => {
                   <div className="bg-black w-full h-full p-2 rounded text-center fw-bold">
                     <img
                       src={`https://dummyimage.com/120x50/000/fff&text=${captcha}`}
-                      alt="Captcha"
+                      alt={captcha}
                     />
                   </div>
                 </div>
@@ -146,33 +149,29 @@ const Login = () => {
                   />
                 </div>
                 <div className="col-sm-6 col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Enter captcha</label>
-                    <input
-                      type="text"
-                      name="inputCaptcha"
-                      className="form-control"
-                      placeholder="Enter captcha"
-                      onPaste={(e) => {
-                        e.preventDefault();
-                      }}
-                      onCopy={(e) => {
-                        e.preventDefault();
-                      }}
-                      onCut={(e) => {
-                        e.preventDefault();
-                      }}
-                      value={form.inputCaptcha}
-                      onChange={handleChange}
-                    />
-                  </div>
+                  <label className="form-label">Enter captcha</label>
+                  <input
+                    type="text"
+                    name="inputCaptcha"
+                    className="form-control"
+                    placeholder="Enter captcha"
+                    onPaste={(e) => {
+                      e.preventDefault();
+                    }}
+                    onCopy={(e) => {
+                      e.preventDefault();
+                    }}
+                    onCut={(e) => {
+                      e.preventDefault();
+                    }}
+                    value={form.inputCaptcha}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
 
               <div className="form-footer">
-                <button type="submit" className="btn btn-success w-100">
-                  Sign in
-                </button>
+                <SubmitBtn className="btn btn-success w-100" text="Sign in" />
               </div>
             </Form>
           </div>
