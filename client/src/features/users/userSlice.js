@@ -44,6 +44,14 @@ const userSlice = createSlice({
     },
     setLoggedinUser: (state, action) => {
       state.loggedinUser = action.payload.user;
+
+      action.payload.roles.map((i) => {
+        state.userRoles.push(i.role_id);
+      });
+
+      action.payload.permissions.map((i) => {
+        state.userPermissions.push(i.permission_id);
+      });
     },
   },
 });
