@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <Wb.AdminDashboard /> },
       { path: "users", element: <Wb.UserList /> },
-      { path: "modules", element: <Wb.ModuleList /> },
+      { path: "modules", element: <Wb.ModuleList />, errorElement: <Error /> },
       { path: "roles", element: <Wb.RoleList /> },
       { path: "permissions", element: <Wb.PermissionList /> },
       { path: "role-permissions", element: <Wb.PermissionRole /> },

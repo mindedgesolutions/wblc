@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { Outlet, redirect, useNavigate } from "react-router-dom";
 
 import "../assets/dist/css/tabler.min.css";
 import "../assets/dist/css/demo.min.css";
@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { splitErrors } from "../utils/showErrors.jsx";
 import { setLoggedinUser } from "../features/users/userSlice.js";
 
+// Loader starts ------
 export const loader = (store) => async () => {
   try {
     const response = await customFetch.get(`/users/user-info`);
@@ -24,16 +25,14 @@ export const loader = (store) => async () => {
         permissions: response.data.permissions.rows,
       })
     );
-    return null;
+    return response;
   } catch (error) {
     splitErrors(error?.response?.data?.msg);
-    if (error?.response?.status === 401) {
-      return redirect("/");
-    }
-    return error;
+    return redirect("/");
   }
 };
 
+// Main component starts ------
 const Layout = () => {
   const navigate = useNavigate();
 

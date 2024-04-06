@@ -11,24 +11,22 @@ import { toast } from "react-toastify";
 import { SubmitBtn } from "../../components";
 
 // Action starts ------
-export const action =
-  (store) =>
-  async ({ request }) => {
-    const { captcha } = store.getState().auth;
-    const formData = await request.formData();
-    let data = Object.fromEntries(formData);
-    data = { ...data, captcha: captcha };
+export const action = (store) => async ({ request }) => {
+  const { captcha } = store.getState().auth;
+  const formData = await request.formData();
+  let data = Object.fromEntries(formData);
+  data = { ...data, captcha: captcha };
 
-    try {
-      await customFetch.post(`/auth/admin/login`, data);
-      toast.success(`You're logged in`);
-      return redirect(`/admin/dashboard`);
-    } catch (error) {
-      store.dispatch(setCaptcha());
-      splitErrors(error?.response?.data?.msg);
-      return error;
-    }
-  };
+  try {
+    await customFetch.post(`/auth/admin/login`, data);
+    toast.success(`You're logged in`);
+    return redirect(`/admin/dashboard`);
+  } catch (error) {
+    store.dispatch(setCaptcha());
+    splitErrors(error?.response?.data?.msg);
+    return error;
+  }
+};
 
 // Main component starts ------
 const Login = () => {
@@ -134,7 +132,7 @@ const Login = () => {
               </div>
               <div className="row row-cards mb-3">
                 <div className="col-sm-5 col-md-5">
-                  <div className="bg-black w-full h-full p-2 rounded text-center fw-bold">
+                  <div className="bg-black w-full h-full p-1 rounded text-center fw-bold">
                     <img
                       src={`https://dummyimage.com/120x50/000/fff&text=${captcha}`}
                       alt={captcha}

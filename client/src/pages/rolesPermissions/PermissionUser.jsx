@@ -63,9 +63,6 @@ const PermissionUser = () => {
       setIsLoading(false);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
-      if (error?.response?.status === 401) {
-        navigate("/");
-      }
       setIsLoading(false);
       return error;
     }
@@ -82,7 +79,7 @@ const PermissionUser = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams?.get("s"), queryParams?.get("page"), total, changeCount]);
+  }, [queryParams?.get("s"), queryParams?.get("page"), changeCount]);
 
   return (
     <>

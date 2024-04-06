@@ -34,6 +34,7 @@ const PermissionRole = () => {
 
   const { roles } = useSelector((store) => store.roles);
   const { total, changeCount } = useSelector((store) => store.common);
+  const { allPermissions } = useSelector((store) => store.permissions);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -48,11 +49,12 @@ const PermissionRole = () => {
           page: queryParams.get("page") || "",
         },
       });
-
-      const permissions = await customFetch.get(
-        `/roles-permissions/all-permissions`
-      );
-      dispatch(setPermissions(permissions?.data?.data?.rows));
+      if (allPermissions.length === 0) {
+        const permissions = await customFetch.get(
+          `/roles-permissions/all-permissions`
+        );
+        dispatch(setPermissions(permissions?.data?.data?.rows));
+      }
       dispatch(setRoles(response?.data?.data?.rows));
       dispatch(setTotal(response?.data?.meta?.totalRecords));
 
@@ -76,7 +78,7 @@ const PermissionRole = () => {
 
   useEffect(() => {
     fetchData();
-  }, [queryParams?.get("s"), queryParams?.get("page"), total, changeCount]);
+  }, [queryParams?.get("s"), queryParams?.get("page"), changeCount]);
 
   return (
     <>
