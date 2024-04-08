@@ -165,7 +165,9 @@ const PermissionRole = () => {
                               <td>
                                 {serialNo(queryParams?.get("page")) + index}.
                               </td>
-                              <td>{i?.name?.toUpperCase()}</td>
+                              <td className="text-nowrap">
+                                {i?.name?.toUpperCase()}
+                              </td>
                               <td>
                                 {i?.permissions?.map((a) => {
                                   return (

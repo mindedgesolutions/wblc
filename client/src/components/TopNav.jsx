@@ -59,9 +59,11 @@ const TopNav = ({ logout }) => {
             >
               <img src={Avatar} className="avatar avatar-sm" alt="" />
               <div className="d-none d-xl-block ps-2">
-                <div className="fw-bold">{loggedinUser.name.toUpperCase()}</div>
+                <div className="fw-bold">
+                  {loggedinUser?.name?.toUpperCase()}
+                </div>
                 <div className="mt-1 small text-muted">
-                  {loggedinUser.email}
+                  {loggedinUser?.email}
                 </div>
               </div>
             </a>

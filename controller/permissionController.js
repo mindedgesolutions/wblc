@@ -7,14 +7,19 @@ import { BadRequestError } from "../errors/customErrors.js";
 export const getAllPermissions = async (req, res) => {
   const { name, page } = req.query;
   const pagination = paginationLogic(page, null);
-  let search = name ? `where name ilike '%${name}%'` : ``;
+  let search = name
+    ? `where permissions.name ilike '%${name}%' or modules.name ilike '%${name}%'`
+    : ``;
 
   const data = await pool.query(
-    `select * from permissions ${search} order by id desc offset $1 limit $2`,
+    `select permissions.*, modules.name as m_name from permissions join modules on permissions.module_id = modules.id ${search} order by modules.name, permissions.name desc offset $1 limit $2`,
     [pagination.offset, pagination.pageLimit]
   );
 
-  const records = await pool.query(`select * from permissions ${search}`, []);
+  const records = await pool.query(
+    `select permissions.* from permissions join modules on permissions.module_id = modules.id ${search}`,
+    []
+  );
   const totalPages = Math.ceil(records.rowCount / pagination.pageLimit);
   const meta = {
     totalPages: totalPages,
@@ -35,13 +40,13 @@ export const getPermissionsWOPagination = async (req, res) => {
 // ------
 
 export const addNewPermission = async (req, res) => {
-  const { name, desc } = req.body;
+  const { moduleId, name, desc } = req.body;
   const nameSlug = slug(name);
   const description = desc ? desc.trim() : null;
 
   const data = await pool.query(
-    `insert into permissions(name, description, slug) values($1, $2, $3) returning *`,
-    [name.trim(), description, nameSlug]
+    `insert into permissions(name, description, slug, module_id) values($1, $2, $3, $4) returning *`,
+    [name.trim(), description, nameSlug, moduleId]
   );
   res.status(StatusCodes.CREATED).json({ data });
 };

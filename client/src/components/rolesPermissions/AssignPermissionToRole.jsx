@@ -13,11 +13,14 @@ import { updateCount } from "../../features/common/commonSlice";
 const AssignPermissionToRole = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [keepOpen, setKeepOpen] = useState(false);
+
   const { roles, rolePermissionModal, selectedRole } = useSelector(
     (store) => store.roles
   );
 
   const handleClose = () => {
+    setKeepOpen(false);
     dispatch(hideRolePermissionModal());
   };
 
@@ -25,7 +28,7 @@ const AssignPermissionToRole = () => {
 
   // ----------------------
 
-  const { permissions } = useSelector((store) => store.permissions);
+  const { allPermissions } = useSelector((store) => store.permissions);
 
   const editRole = roles.find((i) => i.id === selectedRole);
 
@@ -40,10 +43,15 @@ const AssignPermissionToRole = () => {
 
   const [selectedPermissions, setSelectedPermissions] = useState(dbPer || []);
 
-  const pers = [];
-  permissions?.map((perm) => {
+  let pers = [];
+  allPermissions?.map((perm) => {
     const element = { value: perm.id, label: perm.name };
     pers.push(element);
+  });
+
+  pers.push({
+    value: import.meta.env.VITE_ALL_PERMISSIONS,
+    label: "All",
   });
 
   const options = pers;
@@ -71,8 +79,11 @@ const AssignPermissionToRole = () => {
         data
       );
       setIsLoading(false);
-      dispatch(hideRolePermissionModal());
+      if (!keepOpen) {
+        dispatch(hideRolePermissionModal());
+      }
       dispatch(updateCount());
+      setSelectedPermissions([]);
       toast.success(`Permission(s) asigned`);
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
@@ -123,6 +134,19 @@ const AssignPermissionToRole = () => {
                 value={selectedPermissions[0]?.value ? selectedPermissions : ""}
                 isMulti
               />
+            </div>
+            <div className="mb-3 col-md-12 mt-0 pt-0">
+              <label className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="keepOpen"
+                  id="keepOpen"
+                  value={keepOpen}
+                  onChange={() => setKeepOpen(!keepOpen ? true : false)}
+                />
+                <span className="datagrid-title">Keep the modal open</span>
+              </label>
             </div>
           </div>
         </Modal.Body>

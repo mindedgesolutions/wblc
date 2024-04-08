@@ -91,43 +91,72 @@ export const updateRole = async (req, res) => {
   res.status(StatusCodes.ACCEPTED).json({ data });
 };
 
-// ------
-
+// Map role and permission starts ------
 export const rolePermissions = async (req, res) => {
   const { roleId, permissions } = req.body;
 
   try {
+    await pool.query(`BEGIN`);
+
     if (permissions.length > 0) {
+      const allPermissions = await pool.query(
+        `select id, name from permissions where is_active=true`
+      );
+
       await pool.query(`delete from map_role_permission where role_id=$1`, [
         roleId,
       ]);
-      // const userIds = await pool.query(
-      //   `delete from map_user_permission where role_id=$1 returning user_id`,
-      //   [roleId]
-      // );
 
-      for (const permission of permissions) {
-        const permissionId = permission.value;
-        await pool.query(
-          `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
-          [roleId, permissionId]
-        );
+      let userIds = await pool.query(
+        `delete from map_user_permission where role_id=$1 returning user_id`,
+        [roleId]
+      );
+      userIds = [...new Set((userIds = userIds.rows.map((i) => i.user_id)))];
+
+      // For all permissions ------
+      if (permissions[0].value === process.env.ALL_PERMISSIONS) {
+        for (const permission of allPermissions.rows) {
+          await pool.query(
+            `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
+            [roleId, permission.id]
+          );
+        }
+
+        for (const user of userIds) {
+          for (const permission of allPermissions.rows) {
+            await pool.query(
+              `insert into map_user_permission(user_id, permission_id, role_id, key) values($1, $2, $3, $4)`,
+              [user, permission.id, roleId, roleId + "-" + permission.value]
+            );
+          }
+        }
+      } else {
+        // For selected permissions ------
+        for (const permission of permissions) {
+          await pool.query(
+            `insert into map_role_permission(role_id, permission_id) values($1, $2)`,
+            [roleId, permission.value]
+          );
+        }
+
+        for (const user of userIds) {
+          for (const permission of permissions) {
+            await pool.query(
+              `insert into map_user_permission(user_id, permission_id, role_id, key) values($1, $2, $3, $4)`,
+              [user, permission.value, roleId, roleId + "-" + permission.value]
+            );
+          }
+        }
       }
 
-      // for (const user of userIds.rows) {
-      //   for (const permission of permissions) {
-      //     await pool.query(
-      //       `insert into map_user_permission(user_id, permission_id, role_id) values($1, $2, $3)`,
-      //       [Number(user.user_id), permission.value, roleId]
-      //     );
-      //   }
-      // }
-    }
+      await pool.query(`COMMIT`);
 
-    res.status(StatusCodes.CREATED).json({ data: `success` });
+      res.status(StatusCodes.OK).json({ data: `success` });
+    }
   } catch (error) {
     await pool.query(`ROLLBACK`);
     console.log(error);
     throw new BadRequestError(`Something went wrong! Please try again`);
   }
 };
+// Map role and permission ends ------

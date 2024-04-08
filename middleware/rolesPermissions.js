@@ -53,3 +53,32 @@ export const validateRole = withValidationErrors([
     .isLength({ min: 3, max: 255 })
     .withMessage(`Description must be between 3 to 255 characters`),
 ]);
+
+export const validatePermission = withValidationErrors([
+  body("moduleId").notEmpty().withMessage(`Select a module`),
+  body("name")
+    .notEmpty()
+    .withMessage(`Enter permission name`)
+    .custom(async (value, { req }) => {
+      const { moduleId } = req.body;
+      const input = slug(value);
+      const { id } = req.params;
+      const condition = id
+        ? `slug=$1 and module_id=$2 and id!=$3`
+        : `slug=$1 and module_id=$2`;
+      const values = id ? [input, moduleId, id] : [input, moduleId];
+
+      const check = await pool.query(
+        `select count(id) from permissions where ${condition}`,
+        values
+      );
+      if (Number(check.rows[0].count) > 0) {
+        throw new BadRequestError(`Permissions exists`);
+      }
+      return true;
+    }),
+  body("desc")
+    .optional({ checkFalsy: true })
+    .isLength({ min: 3, max: 255 })
+    .withMessage(`Description must be between 3 to 255 characters`),
+]);

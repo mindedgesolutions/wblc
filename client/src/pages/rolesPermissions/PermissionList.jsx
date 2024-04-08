@@ -23,7 +23,9 @@ import {
   setPermissions,
   showConfirmModal,
   showAddModal,
+  setAllPermissions,
 } from "../../features/rolesPermissions/permissionSlice";
+import { setAllModules } from "../../features/rolesPermissions/moduleSlice";
 
 const PermissionList = () => {
   document.title = `List of Permissions | ${import.meta.env.VITE_ADMIN_TITLE}`;
@@ -35,6 +37,8 @@ const PermissionList = () => {
 
   const { permissions } = useSelector((store) => store.permissions);
   const { total, changeCount } = useSelector((store) => store.common);
+  const { allModules } = useSelector((store) => store.modules);
+
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -49,6 +53,14 @@ const PermissionList = () => {
           page: queryParams.get("page") || "",
         },
       });
+
+      if (allModules.length === 0) {
+        const modules = await customFetch.get(`/roles-permissions/all-modules`);
+        dispatch(setAllModules(modules.data.data.rows));
+      }
+
+      const all = await customFetch.get(`/roles-permissions/all-permissions`);
+      dispatch(setAllPermissions(all.data.data.rows));
 
       dispatch(setPermissions(response.data.data.rows));
       dispatch(setTotal(response.data.meta.totalRecords));
@@ -154,6 +166,7 @@ const PermissionList = () => {
                     <tr>
                       <th className="bg-dark text-white">SL. NO.</th>
                       <th className="bg-dark text-white">Module</th>
+                      <th className="bg-dark text-white">Permission</th>
                       <th className="bg-dark text-white">Description</th>
                       <th className="bg-dark text-white">Status</th>
                       <th className="bg-dark text-white"></th>
@@ -162,7 +175,7 @@ const PermissionList = () => {
                   <tbody>
                     {isLoading ? (
                       <tr>
-                        <td colSpan={5}>
+                        <td colSpan={6}>
                           <TableLoader />
                         </td>
                       </tr>
@@ -184,6 +197,7 @@ const PermissionList = () => {
                               <td>
                                 {serialNo(queryParams.get("page")) + index}.
                               </td>
+                              <td>{i?.m_name?.toUpperCase()}</td>
                               <td>{i?.name?.toUpperCase()}</td>
                               <td>{shortDesc(i?.description)}</td>
                               <td>{isActive}</td>

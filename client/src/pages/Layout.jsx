@@ -16,20 +16,21 @@ import { setLoggedinUser } from "../features/users/userSlice.js";
 
 // Loader starts ------
 export const loader = (store) => async () => {
-  try {
-    const response = await customFetch.get(`/users/user-info`);
-    store.dispatch(
-      setLoggedinUser({
-        user: response.data.user.rows[0],
-        roles: response.data.roles.rows,
-        permissions: response.data.permissions.rows,
-      })
-    );
-    return response;
-  } catch (error) {
-    splitErrors(error?.response?.data?.msg);
-    return redirect("/");
-  }
+  // try {
+  //   const response = await customFetch.get(`/users/user-info`);
+  //   store.dispatch(
+  //     setLoggedinUser({
+  //       user: response.data.user.rows[0],
+  //       roles: response.data.roles.rows,
+  //       permissions: response.data.permissions.rows,
+  //     })
+  //   );
+  //   return response;
+  // } catch (error) {
+  //   splitErrors(error?.response?.data?.msg);
+  //   return redirect("/");
+  // }
+  return null;
 };
 
 // Main component starts ------

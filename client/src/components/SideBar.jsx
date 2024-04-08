@@ -90,11 +90,11 @@ const SideBar = () => {
               <div className="dropdown-menu">
                 <div className="dropdown-menu-columns">
                   <div className="dropdown-menu-column">
-                    <Link to="/admin/modules" className="dropdown-item">
-                      Modules
-                    </Link>
                     <Link to="/admin/roles" className="dropdown-item">
                       Roles
+                    </Link>
+                    <Link to="/admin/modules" className="dropdown-item">
+                      Modules
                     </Link>
                     <Link to="/admin/permissions" className="dropdown-item">
                       Permissions

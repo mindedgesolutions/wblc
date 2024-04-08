@@ -10,6 +10,7 @@ import {
 } from "../controller/moduleController.js";
 import {
   validateModule,
+  validatePermission,
   validateRole,
 } from "../middleware/rolesPermissions.js";
 import {
@@ -33,7 +34,7 @@ import { protectRoute } from "../middleware/authMiddleware.js";
 
 router
   .route(`/modules`)
-  .get(protectRoute, getAllModules)
+  .get(getAllModules)
   .post(validateModule, addNewModule)
   .delete(deleteModule);
 router.patch(`/modules/:id`, validateModule, updateModule);
@@ -42,7 +43,7 @@ router.get(`/all-modules`, getModulesWOPagination);
 
 router
   .route(`/roles`)
-  .get(protectRoute, getAllRoles)
+  .get(getAllRoles)
   .post(validateRole, addNewRole)
   .delete(deleteRole);
 router.patch(`/roles/:id`, validateRole, updateRole);
@@ -52,10 +53,10 @@ router.get(`/all-roles`, getRolesWOPagination);
 
 router
   .route(`/permissions`)
-  .get(protectRoute, getAllPermissions)
-  .post(validateModule, addNewPermission)
+  .get(getAllPermissions)
+  .post(validatePermission, addNewPermission)
   .delete(deletePermission);
-router.patch(`/permissions/:id`, validateModule, updatePermission);
+router.patch(`/permissions/:id`, validatePermission, updatePermission);
 router.patch(`/activate-permission/:id`, activatePermission);
 router.get(`/all-permissions`, getPermissionsWOPagination);
 
