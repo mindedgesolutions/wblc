@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "react-bootstrap";
 import SubmitBtn from "../SubmitBtn";
-import { nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 import Select from "react-select";
 import { splitErrors } from "../../utils/showErrors";
 import customFetch from "../../utils/customFetch";

@@ -237,23 +237,32 @@ export const updateUserPermission = async (req, res) => {
     try {
       await pool.query(`BEGIN`);
 
-      // await pool.query(`delete from map_user_permission where user_id=$1`, [
-      //   userId,
-      // ]);
+      await pool.query(`delete from map_user_permission where user_id=$1`, [
+        userId,
+      ]);
 
       for (const i of permissions) {
-        console.log(i);
-        // await pool.query(
-        //   `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
-        //   [userId, i.value]
-        // );
+        const roleIds = await pool.query(
+          `select role_id from map_role_permission where permission_id=$1`,
+          [i.value]
+        );
+        await pool.query(
+          `insert into map_user_permission(user_id, permission_id, role_id, key) values($1, $2, $3, $4)`,
+          [
+            userId,
+            i.value,
+            roleIds.rows[0].role_id,
+            roleIds.rows[0].role_id + "-" + i.value,
+          ]
+        );
       }
       await pool.query(`COMMIT`);
 
       res.status(StatusCodes.OK).json({ data: `success` });
     } catch (error) {
       await pool.query(`ROLLBACK`);
-      return error;
+      console.log(error);
+      throw new BadRequestError(`Something went wrong!`);
     }
   }
 };

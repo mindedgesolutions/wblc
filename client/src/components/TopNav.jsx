@@ -8,7 +8,8 @@ const TopNav = ({ logout }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(
     localStorage.getItem("theme") === "dark" ? true : false
   );
-  const { loggedinUser } = useSelector((store) => store.users);
+  const { loggedinUser, userPermissions } = useSelector((store) => store.users);
+  console.log(userPermissions);
 
   const toggleTheme = () => {
     const newTheme = !isDarkTheme;
