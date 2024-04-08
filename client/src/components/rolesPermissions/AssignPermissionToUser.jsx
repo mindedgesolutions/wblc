@@ -44,7 +44,9 @@ const AssignPermissionToUser = () => {
     pers.push(element);
   });
 
-  const options = pers;
+  const options = pers.filter(
+    (obj1) => !dbPer.some((obj2) => obj1.label === obj2.label)
+  );
 
   const handleChange = async (selected) => {
     setDbPermissions(selected);

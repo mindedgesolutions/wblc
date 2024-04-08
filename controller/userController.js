@@ -105,7 +105,7 @@ export const getUserDetails = async (req, res) => {
 
 // ------
 
-export const addNewUser = async (req, res) => {
+export const addNewUser = async (req, res, callback) => {
   const { name, email, mobile, roles } = req.body;
   const uuid = uuidv4();
   const password = await hashPassword("welcome123");
@@ -113,45 +113,52 @@ export const addNewUser = async (req, res) => {
   const dateTime = currentDate();
 
   try {
-    // await pool.query("BEGIN");
+    await pool.query("BEGIN");
 
     const data = await pool.query(
       `insert into user_master(name, email, mobile, username, password, uuid, created_at, updated_at) values($1, $2, $3, $4, $5, $6, $7, $8) returning id`,
       [name, email, mobile, username, password, uuid, dateTime, dateTime]
     );
+    const userId = data.rows[0].id;
 
-    if (data.rows[0].id) {
-      const allRolePermissions = await pool.query(
-        `select role_id, permission_id from map_role_permission`
+    // ------
+
+    const allRolePermissions = await pool.query(
+      `select role_id, permission_id from map_role_permission`
+    );
+    let allPermissions = [];
+
+    for (const role of roles) {
+      await pool.query(
+        `insert into map_user_role(user_id, role_id) values($1, $2)`,
+        [Number(userId), Number(role.value)]
       );
 
-      for (const role of roles) {
-        await pool.query(
-          `insert into map_user_role(user_id, role_id) values($1, $2)`,
-          [Number(data.rows[0].id), Number(role.value)]
-        );
+      let element = allRolePermissions.rows.filter(
+        (i) => i.role_id === role.value
+      );
+      allPermissions.push(element);
+    }
 
-        const element = allRolePermissions.rows.filter(
-          (i) => i.role_id === role.value
+    // ------
+
+    for (const permission of allPermissions) {
+      for (const i of permission) {
+        await pool.query(
+          `insert into map_user_permission(user_id, permission_id, role_id, key) values($1, $2, $3, $4)`,
+          [
+            Number(userId),
+            Number(i.permission_id),
+            Number(i.role_id),
+            i.role_id + "-" + i.permission_id,
+          ]
         );
-        element?.map(async (e) => {
-          const check = await pool.query(
-            `select count(user_id) from map_user_permission where user_id=$1 and permission_id=$2`,
-            [data.rows[0].id, e.permission_id]
-          );
-          if (check.rows[0].count === "0") {
-            await pool.query(
-              `insert into map_user_permission(user_id, permission_id, role_id) values($1, $2, $3)`,
-              [data.rows[0].id, e.permission_id, Number(role.value)]
-            );
-          }
-        });
       }
     }
 
-    // await pool.query("COMMIT");
+    await pool.query("COMMIT");
 
-    res.status(StatusCodes.CREATED).json({ data });
+    res.status(StatusCodes.CREATED).json({ data: `success` });
   } catch (error) {
     await pool.query("ROLLBACK");
     console.log(error);
@@ -167,7 +174,7 @@ export const editUser = async (req, res) => {
   const dateTime = currentDate();
 
   try {
-    // await pool.query("BEGIN");
+    await pool.query("BEGIN");
 
     const data = await pool.query(
       `update user_master set name=$1, email=$2, mobile=$3, updated_at=$4 where id=$5 returning id`,
@@ -175,14 +182,15 @@ export const editUser = async (req, res) => {
     );
 
     if (roles.length > 0) {
-      const allRolePermissions = await pool.query(
-        `select role_id, permission_id from map_role_permission`
-      );
-
       await pool.query(`delete from map_user_role where user_id=$1`, [id]);
       await pool.query(`delete from map_user_permission where user_id=$1`, [
         id,
       ]);
+
+      const allRolePermissions = await pool.query(
+        `select role_id, permission_id from map_role_permission`
+      );
+      let allPermissions = [];
 
       for (const role of roles) {
         await pool.query(
@@ -190,19 +198,28 @@ export const editUser = async (req, res) => {
           [id, Number(role.value)]
         );
 
-        const element = allRolePermissions.rows.filter(
-          (i) => i.role_id === Number(role.value)
+        let element = allRolePermissions.rows.filter(
+          (i) => i.role_id === role.value
         );
-        element?.map(async (e) => {
+        allPermissions.push(element);
+      }
+
+      for (const permission of allPermissions) {
+        for (const i of permission) {
           await pool.query(
-            `insert into map_user_permission(user_id, permission_id, role_id) values($1, $2, $3)`,
-            [id, e.permission_id, Number(role.value)]
+            `insert into map_user_permission(user_id, permission_id, role_id, key) values($1, $2, $3, $4)`,
+            [
+              id,
+              Number(i.permission_id),
+              Number(i.role_id),
+              i.role_id + "-" + i.permission_id,
+            ]
           );
-        });
+        }
       }
     }
 
-    // await pool.query("COMMIT");
+    await pool.query("COMMIT");
 
     res.status(StatusCodes.CREATED).json({ data });
   } catch (error) {
@@ -216,21 +233,27 @@ export const editUser = async (req, res) => {
 
 export const updateUserPermission = async (req, res) => {
   const { userId, permissions } = req.body;
-  try {
-    await pool.query(`delete from map_user_permission where user_id=$1`, [
-      userId,
-    ]);
+  if (permissions.length > 0) {
+    try {
+      await pool.query(`BEGIN`);
 
-    permissions.map(async (i) => {
-      await pool.query(
-        `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
-        [userId, i.value]
-      );
-    });
+      // await pool.query(`delete from map_user_permission where user_id=$1`, [
+      //   userId,
+      // ]);
 
-    res.status(StatusCodes.OK).json({ data: `success` });
-  } catch (error) {
-    await pool.query(`ROLLBACK`);
-    return error;
+      for (const i of permissions) {
+        console.log(i);
+        // await pool.query(
+        //   `insert into map_user_permission(user_id, permission_id) values($1, $2)`,
+        //   [userId, i.value]
+        // );
+      }
+      await pool.query(`COMMIT`);
+
+      res.status(StatusCodes.OK).json({ data: `success` });
+    } catch (error) {
+      await pool.query(`ROLLBACK`);
+      return error;
+    }
   }
 };

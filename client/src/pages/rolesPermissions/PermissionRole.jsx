@@ -20,7 +20,7 @@ import {
   showRolePermissionModal,
 } from "../../features/rolesPermissions/roleSlice";
 import { setTotal } from "../../features/common/commonSlice";
-import { setPermissions } from "../../features/rolesPermissions/permissionSlice";
+import { setAllPermissions } from "../../features/rolesPermissions/permissionSlice";
 
 const PermissionRole = () => {
   document.title = `Role-wise Permissions | ${
@@ -33,7 +33,7 @@ const PermissionRole = () => {
   const resetUrl = `/admin/role-permissions`;
 
   const { roles } = useSelector((store) => store.roles);
-  const { total, changeCount } = useSelector((store) => store.common);
+  const { changeCount } = useSelector((store) => store.common);
   const { allPermissions } = useSelector((store) => store.permissions);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
@@ -53,7 +53,7 @@ const PermissionRole = () => {
         const permissions = await customFetch.get(
           `/roles-permissions/all-permissions`
         );
-        dispatch(setPermissions(permissions?.data?.data?.rows));
+        dispatch(setAllPermissions(permissions?.data?.data?.rows));
       }
       dispatch(setRoles(response?.data?.data?.rows));
       dispatch(setTotal(response?.data?.meta?.totalRecords));

@@ -53,6 +53,10 @@ const Login = () => {
     dispatch(setCaptcha());
   }, []);
 
+  const captchaImage = !captcha
+    ? `https://dummyimage.com/120x50/000/fff&text=${`Loading ...`}`
+    : `https://dummyimage.com/120x50/000/fff&text=${captcha}`;
+
   return (
     <div className="page page-center">
       <div className="container container-tight py-4">
@@ -133,10 +137,7 @@ const Login = () => {
               <div className="row row-cards mb-3">
                 <div className="col-sm-5 col-md-5">
                   <div className="bg-black w-full h-full p-1 rounded text-center fw-bold">
-                    <img
-                      src={`https://dummyimage.com/120x50/000/fff&text=${captcha}`}
-                      alt={captcha}
-                    />
+                    <img src={captchaImage} alt={captcha} />
                   </div>
                 </div>
                 <div className="col-sm-1 col-md-1 pt-5 align-center">

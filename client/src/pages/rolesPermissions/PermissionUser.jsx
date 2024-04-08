@@ -33,7 +33,7 @@ const PermissionUser = () => {
   const resetUrl = `/admin/user-permissions`;
 
   const { users } = useSelector((store) => store.users);
-  const { total, changeCount } = useSelector((store) => store.common);
+  const { changeCount } = useSelector((store) => store.common);
   const { allPermissions } = useSelector((store) => store.permissions);
   const [isLoading, setIsLoading] = useState(false);
   const [metaData, setMetaData] = useState([]);
@@ -155,7 +155,9 @@ const PermissionUser = () => {
                               <td>
                                 {serialNo(queryParams?.get("page")) + index}.
                               </td>
-                              <td>{i?.name?.toUpperCase()}</td>
+                              <td className="text-nowrap">
+                                {i?.name?.toUpperCase()}
+                              </td>
                               <td>
                                 {i?.permissions?.map((a) => {
                                   return (
