@@ -6,8 +6,12 @@ import { AiOutlineHome, AiOutlineFile } from "react-icons/ai";
 import { BsFillMoonFill, BsSunFill, BsGraphUpArrow } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
 import { FiUsers } from "react-icons/fi";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
+  const { userPermissions } = useSelector((store) => store.users);
+  console.log(userPermissions);
+
   return (
     <aside
       className="navbar navbar-vertical navbar-expand-lg"
