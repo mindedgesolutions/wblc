@@ -12,31 +12,45 @@ import { Footer, SideBar, TopNav } from "../components/index.js";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import { splitErrors } from "../utils/showErrors.jsx";
-import { setLoggedinUser } from "../features/users/userSlice.js";
+import {
+  setLoggedinUser,
+  unsetLoggedinUser,
+} from "../features/users/userSlice.js";
+import { useDispatch } from "react-redux";
 
 // Loader starts ------
 export const loader = (store) => async () => {
-  try {
-    const response = await customFetch.get(`/users/user-info`);
-    store.dispatch(
-      setLoggedinUser({
-        user: response.data.user.rows[0],
-        roles: response.data.roles.rows,
-        permissions: response.data.permissions.rows,
-      })
-    );
-    return response;
-  } catch (error) {
-    splitErrors(error?.response?.data?.msg);
-    return redirect("/");
+  const user = store.getState().users;
+
+  if (!user.loggedinUser.name) {
+    try {
+      const response = await customFetch.get(`/users/user-info`);
+      console.log(response.data.user.rows[0]);
+      store.dispatch(
+        setLoggedinUser({
+          user: response.data.user.rows[0],
+          roles: response.data.roles.rows,
+          permissions: response.data.permissions.rows,
+        })
+      );
+
+      return response;
+    } catch (error) {
+      splitErrors(error?.response?.data?.msg);
+      return redirect("/");
+    }
+  } else {
+    return null;
   }
 };
 
 // Main component starts ------
 const Layout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const logout = async () => {
+    dispatch(unsetLoggedinUser());
     await customFetch.get(`/auth/admin/logout`);
     toast.success(`You've logged out successfully`);
     navigate("/");

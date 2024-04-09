@@ -44,14 +44,13 @@ const userSlice = createSlice({
     },
     setLoggedinUser: (state, action) => {
       state.loggedinUser = action.payload.user;
-
-      action.payload.roles.map((i) => {
-        state.userRoles.push(i.role_id);
-      });
-
-      action.payload.permissions.map((i) => {
-        state.userPermissions.push(i.permission_id);
-      });
+      state.userRoles = action.payload.roles;
+      state.userPermissions = action.payload.permissions;
+    },
+    unsetLoggedinUser: (state) => {
+      state.loggedinUser = {};
+      state.userRoles = [];
+      state.userPermissions = [];
     },
   },
 });
@@ -65,5 +64,6 @@ export const {
   setSelectedRoles,
   underSelectedRoles,
   setLoggedinUser,
+  unsetLoggedinUser,
 } = userSlice.actions;
 export default userSlice.reducer;

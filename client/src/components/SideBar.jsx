@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 
 const SideBar = () => {
   const { userPermissions } = useSelector((store) => store.users);
-  console.log(userPermissions);
 
   return (
     <aside
@@ -103,6 +102,9 @@ const SideBar = () => {
                     <Link to="/admin/permissions" className="dropdown-item">
                       Permissions
                     </Link>
+                    <Link to="/admin/menus" className="dropdown-item">
+                      Sidebar Menu
+                    </Link>
                     <Link
                       to="/admin/role-permissions"
                       className="dropdown-item"
@@ -125,44 +127,6 @@ const SideBar = () => {
                   <FiUsers size={18} />
                 </span>
                 <span className="nav-link-title">Users</span>
-              </Link>
-            </li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#navbar-extra"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="false"
-                role="button"
-                aria-expanded="false"
-              >
-                <span className="nav-link-icon d-md-none d-lg-inline-block">
-                  <AiOutlineFile size={18} />
-                </span>
-                <span className="nav-link-title">Applications</span>
-              </a>
-              <div className="dropdown-menu">
-                <div className="dropdown-menu-columns">
-                  <div className="dropdown-menu-column">
-                    <Link to="/admin/applications" className="dropdown-item">
-                      All applications
-                    </Link>
-                    <Link
-                      to="/admin/search-application"
-                      className="dropdown-item"
-                    >
-                      Search application
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/admin/reports">
-                <span className="nav-link-icon d-md-none d-lg-inline-block">
-                  <BsGraphUpArrow size={16} />
-                </span>
-                <span className="nav-link-title">Reports</span>
               </Link>
             </li>
           </ul>

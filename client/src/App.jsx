@@ -27,6 +27,7 @@ const router = createBrowserRouter([
       { path: "modules", element: <Wb.ModuleList />, errorElement: <Error /> },
       { path: "roles", element: <Wb.RoleList /> },
       { path: "permissions", element: <Wb.PermissionList /> },
+      { path: "menus", element: <Wb.MenuList /> },
       { path: "role-permissions", element: <Wb.PermissionRole /> },
       { path: "user-permissions", element: <Wb.PermissionUser /> },
     ],

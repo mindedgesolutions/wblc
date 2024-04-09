@@ -6,6 +6,7 @@ export { default as ChangePassword } from "./auth/ChangePassword";
 export { default as Profile } from "./auth/Profile";
 export { default as ModuleList } from "./rolesPermissions/ModuleList";
 export { default as PermissionList } from "./rolesPermissions/PermissionList";
+export { default as MenuList } from "./rolesPermissions/MenuList";
 export { default as PermissionRole } from "./rolesPermissions/PermissionRole";
 export { default as PermissionUser } from "./rolesPermissions/PermissionUser";
 export { default as RoleList } from "./rolesPermissions/RoleList";
